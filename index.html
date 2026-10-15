@@ -136,7 +136,7 @@ function loc(root){const w=document.createTreeWalker(root,4);let n;
  for(const el of root.querySelectorAll('[title],[aria-label]'))for(const a of['title','aria-label']){const c=el.getAttribute(a);if(c==null)continue;const m=el['_'+a],o=m&&c===m[1]?m[0]:c;if(!EN.has(o))continue;const v=LANG==='en'?EN.get(o):o;if(c!==v){el['_'+a]=[o,v];el.setAttribute(a,v)}}}
 /* ===== Supabase config — عدّل هذين السطرين فقط ===== */
 const SUPABASE_URL = 'https://gziclyqqrbudlrbhgiku.supabase.co';
-const SUPABASE_KEY = 'الصق_المفتاح_الذي_أرسلته_هنا'; publishable key من Project Settings > API Keys
+const SUPABASE_KEY = 'sb_publishable_Awiu4HDZ0Cp3TWzNydQHTg_ZqIs5N-D';
 const EMAIL_DOMAIN='scanapp.local',KEEP_LOGIN=false; // KEEP_LOGIN=true: يفضل الموظف مسجّل دخول بعد إغلاق المتصفح
 const sb=(window.supabase&&/^https:\/\//.test(SUPABASE_URL)&&SUPABASE_KEY&&!/YOUR-/.test(SUPABASE_URL+SUPABASE_KEY))?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,storage:KEEP_LOGIN?window.localStorage:window.sessionStorage}}):null;
 const AKEY='scanapp.active',blank=()=>({brands:[],scans:{},dups:{},active:'',removed:[],synced:0});
