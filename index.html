@@ -134,6 +134,13 @@ body.dopen .m-drw{transform:none;visibility:visible;transition:transform .5s cub
 html[dir=rtl]{--x:30px}html[dir=ltr]{--x:-30px}
 body.dopen .m-h,body.dopen .m-n>*,body.dopen .m-f{animation:mIn .55s cubic-bezier(.22,1,.36,1) backwards;animation-delay:calc(var(--i,0)*45ms + 120ms)}
 @media(prefers-reduced-motion:reduce){.m-btn,.m-btn span,.m-scr,.m-drw,.m-n button,.m-n button::before,.m-n button::after,.m-f button,.m-f button::before{transition:none!important}body.dopen .m-h,body.dopen .m-n>*,body.dopen .m-f{animation:none!important}.m-btn.dot::after{animation:none}}
+.scr{display:flex;gap:8px;align-items:stretch}.scr input{flex:1;min-width:0}.cb{font-size:26px;padding:0 18px;border-radius:8px}
+#camo{position:fixed;inset:0;z-index:70;background:#000;display:flex;flex-direction:column}
+#camv{flex:1;min-height:0;width:100%;object-fit:cover;background:#000}
+#camo .cfr{position:absolute;left:8%;right:8%;top:28%;height:24%;border:3px solid rgba(255,255,255,.7);border-radius:12px;pointer-events:none}
+#cams{min-height:3.4em;padding:10px 14px;color:#fff;font-weight:700;background:#161616;text-align:center}
+#cams.ok{background:var(--okbg);color:var(--ok)}#cams.warn{background:var(--warnbg);color:var(--warn)}#cams.err{background:var(--badbg);color:var(--bad)}
+#camo .pri{margin:10px;padding:14px;font-size:18px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -141,7 +148,7 @@ body.dopen .m-h,body.dopen .m-n>*,body.dopen .m-f{animation:mIn .55s cubic-bezie
 <div class="w">
 <header><h1 id="ttl">مسح الشحنات</h1></header>
 <nav class="tabs" id="tabs"></nav>
-<section class="sc"><label for="tn">امسح الباركود أو اكتب رقم الشحنة ثم Enter</label><input id="tn" autocomplete="off" autofocus><div id="msg" role="status"></div></section>
+<section class="sc"><label for="tn">امسح الباركود أو اكتب رقم الشحنة ثم Enter</label><div class="scr"><input id="tn" autocomplete="off" autofocus><button type="button" id="cam" class="pri cb" title="مسح بالكاميرا" aria-label="مسح بالكاميرا" hidden>📷</button></div><div id="msg" role="status"></div></section>
 <section class="st"><div><b id="s1">0</b><span>الصادر (توصيل واستبدال)</span></div><div><b id="s2">0</b><span>المرتجعات</span></div><div><b id="s3">0</b><span>حركات اليوم</span></div><div><b id="s4">0</b><span>محاولات مكررة</span><br><button type="button" id="dz" class="sm">تصفير العداد</button></div></section>
 <div class="vt"><button data-v="out">الصادر</button><button data-v="ret">المرتجعات</button><button data-v="an">التحليلات</button></div>
 <div class="bar"><input type="date" id="dd" aria-label="التاريخ"><select id="dm" aria-label="نوع الفترة"><option value="d">يومي</option><option value="m">شهري</option></select><button id="dl" class="pri">📥 تحميل تقرير اليوم Excel</button><button id="dbg" title="ينسخ رد بوسطة بعد حجب بيانات العميل">نسخ رد بوسطة الأخير (تشخيص)</button></div>
@@ -166,6 +173,7 @@ body.dopen .m-h,body.dopen .m-n>*,body.dopen .m-f{animation:mIn .55s cubic-bezie
 <dialog id="dlg"><form method="dialog" id="cfg"><h2>إعدادات البراندات</h2><div id="bl"></div><button type="button" id="add">+ إضافة براند</button> <button type="button" id="sv" class="pri">حفظ</button> <button value="x">إغلاق</button></form></dialog>
 <dialog id="usr" class="wd"><div id="ub"></div><div style="margin-top:12px"><button type="button" id="uc">إغلاق</button></div></dialog>
 <dialog id="pwd"><form id="pwf"><h2 id="pwt">كلمة المرور</h2><div class="f"><label for="pw1">كلمة المرور</label><input type="password" id="pw1" class="l" autocomplete="off"></div><div class="f" id="pw2w" hidden><label for="pw2">أعد كتابتها للتأكيد</label><input type="password" id="pw2" class="l" autocomplete="off"></div><div id="pwe" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><button type="submit" class="pri">تأكيد</button> <button type="button" id="pwx">إلغاء</button></form></dialog>
+<div id="camo" hidden><video id="camv" playsinline muted></video><div class="cfr"></div><div id="cams" role="status"></div><button type="button" id="camx" class="pri">إغلاق</button></div>
 <script>
 const $=s=>document.querySelector(s),KEY='scanapp.v1';
 let ME=null,signup=false,USERS={},DBR=[],poll=0,lastP=0,syncT=0,savedCfg=false;function isAdm(){return !!ME&&ME.role==='admin'}
@@ -325,6 +333,26 @@ async function handle(b,tn){
 }
 let chain=Promise.resolve();
 $('#tn').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const tn=e.target.value.trim();e.target.value='';if(!tn)return;const b=B();chain=chain.then(()=>handle(b,tn))});
+/* ===== مسح بكاميرا الموبايل ===== */
+EN.set('مسح بالكاميرا','Scan with camera');
+const camBtn=$('#cam');let camStream=null,camOn=false,camLast='',camAt=0,camDet=null,camRd=null;
+if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia)camBtn.hidden=false;
+const loadZX=()=>window.ZXing?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';s.onload=ok;s.onerror=()=>no(new Error('zx'));document.head.appendChild(s)});
+function camHit(code){code=String(code||'').trim();const now=Date.now();if(!code||(code===camLast&&now-camAt<3000))return;camLast=code;camAt=now;if(navigator.vibrate)navigator.vibrate(60);const b=B();
+ chain=chain.then(()=>handle(b,code)).then(()=>{const m=$('#msg'),s=$('#cams');s.textContent=m.textContent;s.className=m.className})}
+async function camOpen(){
+ const st=$('#cams'),v=$('#camv');st.textContent='';st.className='';$('#camo').hidden=false;camOn=true;camLast='';
+ try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'},width:{ideal:1280},height:{ideal:720}},audio:false})}
+ catch{st.textContent=T('تعذر تشغيل الكاميرا. اسمح بالوصول للكاميرا من إعدادات المتصفح (والموقع لازم يكون https).','Could not start the camera. Allow camera access in the browser settings (the site must use https).');st.className='err';return}
+ if('BarcodeDetector' in window){try{camDet=new BarcodeDetector({formats:['code_128','code_39','ean_13','ean_8','upc_a','itf','codabar','qr_code']})}catch{camDet=null}}
+ if(camDet){v.srcObject=camStream;await v.play().catch(()=>{});const loop=async()=>{if(!camOn)return;try{const r=await camDet.detect(v);if(r.length)camHit(r[0].rawValue)}catch{}setTimeout(loop,150)};loop();return}
+ try{await loadZX();const Z=window.ZXing;camRd=new Z.BrowserMultiFormatReader(new Map([[Z.DecodeHintType.TRY_HARDER,true]]));camRd.decodeFromStream(camStream,v,r=>{if(r&&camOn)camHit(r.getText())})}
+ catch{st.textContent=T('تعذر تحميل قارئ الباركود. تأكد من الاتصال بالإنترنت.','Could not load the barcode reader. Check your connection.');st.className='err'}
+}
+function camClose(){camOn=false;try{camRd&&camRd.reset()}catch{}camRd=null;if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}$('#camv').srcObject=null;$('#camo').hidden=true;if(!matchMedia('(pointer:coarse)').matches)$('#tn').focus()}
+camBtn.onclick=camOpen;$('#camx').onclick=camClose;
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&camOn)camClose()});
+
 $('#tabs').onclick=e=>{const id=e.target.dataset.id;if(id){S.active=id;save();render();$('#msg').className='';$('#tn').focus()}};
 $('#rows').onclick=async e=>{const id=e.target.dataset.del;if(!id||!isAdm())return;const b=B(),s=L(b.id).find(x=>x.id===id);
  if(s&&confirm(T(`حذف الشحنة ${s.tn} من ${b.name}؟`,`Delete shipment ${s.tn} from ${b.name}?`))){const{data,error}=await sb.from('scans').delete().eq('id',id).select('id');
