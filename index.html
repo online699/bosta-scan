@@ -102,6 +102,8 @@ body:not(.locked) #lock{display:none}
 dialog.wd{max-width:860px;width:94%}.chk{display:flex;gap:8px;align-items:center;margin:4px 0}.chk input{width:auto}.pg{display:grid;grid-template-columns:1fr 1fr;gap:2px 14px}
 .uc{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;background:color-mix(in srgb,currentColor 14%,transparent)}.uc.ok{color:var(--ok)}.uc.warn{color:var(--warn)}.uc.bad{color:var(--bad)}
 @media(max-width:640px){.pg{grid-template-columns:1fr}}
+#msg{margin:14px 0}
+.ysync{display:flex;gap:10px;align-items:center;margin:6px 0 0;font-size:13px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -109,7 +111,9 @@ dialog.wd{max-width:860px;width:94%}.chk{display:flex;gap:8px;align-items:center
 <div class="w">
 <header><h1 id="ttl">مسح الشحنات</h1><div class="bt"><span class="who" id="who"></span><button id="lg" type="button">🌐 English</button><button id="smb" type="button" aria-pressed="true">💨 دخان: تشغيل</button><button id="th" type="button" aria-pressed="false">🌙 نمط ليلي</button><button id="um" type="button" hidden>👥 المستخدمون</button><button id="cf" class="pri">إعدادات البراندات وشركات الشحن</button><button id="cpw" type="button">🔑 كلمة مرور حسابي</button><button id="lo" type="button">🔒 تسجيل الخروج</button></div></header>
 <nav class="tabs" id="tabs"></nav>
-<section class="sc"><label for="tn">امسح الباركود أو اكتب رقم الشحنة ثم Enter</label><input id="tn" autocomplete="off" autofocus><div id="msg" role="status"></div></section>
+<div class="ysync"><button id="rl" type="button" class="sm">🔄 تحديث البيانات</button><span id="sync" class="mut"></span></div>
+<section class="sc"><label for="tn">امسح الباركود أو اكتب رقم الشحنة ثم Enter</label><input id="tn" autocomplete="off"></section>
+<div id="msg" role="status"></div>
 <section class="st"><div><b id="s1">0</b><span>الصادر (توصيل واستبدال)</span></div><div><b id="s2">0</b><span>المرتجعات</span></div><div><b id="s3">0</b><span>حركات اليوم</span></div><div><b id="s4">0</b><span>محاولات مكررة</span><br><button type="button" id="dz" class="sm">تصفير العداد</button></div></section>
 <div class="vt"><button data-v="out">الصادر</button><button data-v="ret">المرتجعات</button><button data-v="an">التحليلات</button></div>
 <div class="bar"><input type="date" id="dd" aria-label="التاريخ"><select id="dm" aria-label="نوع الفترة"><option value="d">يومي</option><option value="m">شهري</option></select><button id="dl" class="pri">📥 تحميل تقرير اليوم Excel</button><button id="dbg" title="ينسخ رد بوسطة بعد حجب بيانات العميل">نسخ رد بوسطة الأخير (تشخيص)</button></div>
@@ -118,7 +122,7 @@ dialog.wd{max-width:860px;width:94%}.chk{display:flex;gap:8px;align-items:center
 </div>
 <div id="lock"><form id="lf"><h2 id="lt">تسجيل الدخول</h2><div class="f" id="lnw" hidden><label for="ln">الاسم</label><input id="ln" autocomplete="name"></div><div class="f"><label for="lu">البريد الإلكتروني</label><input id="lu" type="email" class="l" autocomplete="email"></div><div class="f"><label for="lp">كلمة المرور</label><input type="password" id="lp" class="l" autocomplete="current-password"></div><div class="f" id="lcw" hidden><label for="lc">أعد كتابة كلمة المرور</label><input type="password" id="lc" class="l" autocomplete="new-password"></div><div id="le" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><div id="lm" role="status" style="color:var(--ok);font-weight:600"></div><button type="submit" class="pri" id="lb">دخول</button> <button type="button" id="lsw">ليس لديك حساب؟ اطلب حساب جديد</button></form></div>
 <canvas id="smk" aria-hidden="true"></canvas>
-<dialog id="dlg"><form method="dialog" id="cfg"><h2>إعدادات البراندات</h2><div id="bl"></div><button type="button" id="add">+ إضافة براند</button> <button type="button" id="sv" class="pri">حفظ</button> <button value="x">إغلاق</button></form></dialog>
+<dialog id="dlg"><form method="dialog" id="cfg"><h2>إعدادات البراندات</h2><div id="bl"></div><div id="mig"></div><button type="button" id="add">+ إضافة براند</button> <button type="button" id="sv" class="pri">حفظ</button> <button value="x">إغلاق</button></form></dialog>
 <dialog id="usr" class="wd"><div id="ub"></div><div style="margin-top:12px"><button type="button" id="uc">إغلاق</button></div></dialog>
 <dialog id="pwd"><form id="pwf"><h2 id="pwt">كلمة المرور</h2><div class="f"><label for="pw1">كلمة المرور</label><input type="password" id="pw1" class="l" autocomplete="off"></div><div class="f" id="pw2w" hidden><label for="pw2">أعد كتابتها للتأكيد</label><input type="password" id="pw2" class="l" autocomplete="off"></div><div id="pwe" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><button type="submit" class="pri">تأكيد</button> <button type="button" id="pwx">إلغاء</button></form></dialog>
 <script>
@@ -127,14 +131,57 @@ let ME=null,signup=false,USERS={},DBR=[],poll=0,lastP=0;function isAdm(){return 
 const EN=new Map(Object.entries({"مسح الشحنات": "Shipment Scanner", "🌙 نمط ليلي": "🌙 Dark mode", "☀️ نمط نهاري": "☀️ Light mode", "إعدادات البراندات وشركات الشحن": "Brands & carriers settings", "امسح الباركود أو اكتب رقم الشحنة ثم Enter": "Scan the barcode or type the tracking number, then press Enter", "الصادر (توصيل واستبدال)": "Outgoing (delivery & exchange)", "المرتجعات": "Returns", "حركات اليوم": "Today's scans", "محاولات مكررة": "Duplicate attempts", "تصفير العداد": "Reset counter", "الصادر": "Outgoing", "صادر": "Outgoing", "التحليلات": "Analytics", "التاريخ": "Date", "نوع الفترة": "Period type", "يومي": "Daily", "شهري": "Monthly", "📥 تحميل تقرير اليوم Excel": "📥 Download daily Excel report", "📥 تحميل تقرير الشهر Excel": "📥 Download monthly Excel report", "نسخ رد بوسطة الأخير (تشخيص)": "Copy last Bosta response (debug)", "ينسخ رد بوسطة بعد حجب بيانات العميل": "Copies the Bosta response with customer data masked", "الفترة": "Period", "شهر التاريخ المحدد": "Month of selected date", "اليوم المحدد": "Selected day", "الكل": "All", "ترتيب العملاء": "Sort customers", "الأكثر طلبًا": "Most orders", "الأكثر مرتجعًا": "Most returns", "🔄 تحديث حالات الشحنات من بوسطة": "🔄 Refresh shipment statuses from Bosta", "رقم الشحنة": "Tracking no.", "النوع": "Type", "وقت المسح": "Scan time", "العميل": "Customer", "المحافظة": "Governorate", "القطع": "Items", "الوصف": "Description", "الشحن": "Shipping", "الحالة": "Status", "حذف": "Delete", "إعدادات البراندات": "Brand settings", "+ إضافة براند": "+ Add brand", "حفظ": "Save", "تغيير كلمة المرور": "Change password", "إغلاق": "Close", "كلمة المرور": "Password", "أعد كتابتها للتأكيد": "Repeat to confirm", "تأكيد": "Confirm", "إلغاء": "Cancel", "توصيل": "Delivery", "استبدال": "Exchange", "مرتجع": "Return", "بدون تحقق": "No verification", "تم التحقق": "Verified", "مبيعات": "Sales", "مرتجعات": "Returns", "الوقت": "Time", "التليفون": "Phone", "التحقق": "Verification", "لا توجد مرتجعات لهذا البراند.": "No returns for this brand.", "لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.": "No shipments for this brand. Start by scanning a barcode.", "اسم البراند": "Brand name", "اللون": "Color", "شركة الشحن": "Carrier", "Bosta (بوسطة)": "Bosta", "شركة أخرى (رابط مخصص)": "Other carrier (custom URL)", "مفتاح الـ API لهذا البراند": "API key for this brand", "يُحفظ في هذا المتصفح فقط. الأفضل مفتاح Read Only.": "Stored in this browser only. A read-only key is best.", "رابط التحقق (للشركة الأخرى فقط)": "Verification URL (other carriers only)", "مثال: https://api.example.com/track/{tracking}": "Example: https://api.example.com/track/{tracking}", "بادئة المفتاح (مثال: Bearer )": "Key prefix (e.g. Bearer )", "رابط Proxy (اختياري)": "Proxy URL (optional)", "لو ظهرت رسالة CORS ضع رابط الـ Worker هنا": "If a CORS error appears, put the Worker URL here", "حذف البراند": "Delete brand", "خلفية الموقع": "Site background", "بدون (الافتراضي)": "None (default)", "لون": "Color", "صورة": "Image", "لون الخلفية": "Background color", "صورة الخلفية": "Background image", "لوجو البراند": "Brand logo", "يظهر مكان عنوان \"مسح الشحنات\" أعلى الصفحة.": "Shown in place of the \"Shipment Scanner\" title at the top.", "إزالة الصورة": "Remove image", "إزالة اللوجو": "Remove logo", "كلمة مرور الإعدادات": "Settings password", "إنشاء كلمة مرور للإعدادات": "Create a settings password", "أدخل كلمة المرور الحالية": "Enter the current password", "كلمة المرور الجديدة": "New password", "كلمة المرور لازم تكون 4 حروف على الأقل.": "Password must be at least 4 characters.", "التأكيد غير مطابق.": "Confirmation does not match.", "تعذر حفظ كلمة المرور في المتصفح.": "Could not save the password in the browser.", "كلمة المرور غير صحيحة.": "Wrong password.", "تسجيل الدخول": "Sign in", "إنشاء حساب الدخول": "Create login", "أول تشغيل: أنشئ اسم مستخدم وكلمة مرور للدخول للموقع.": "First run: create a username and password for this site.", "اسم المستخدم": "Username", "أعد كتابة كلمة المرور": "Repeat password", "دخول": "Sign in", "حفظ ودخول": "Save & sign in", "اسم المستخدم مطلوب.": "Username is required.", "اسم المستخدم أو كلمة المرور غير صحيحة.": "Wrong username or password.", "تعذر حفظ بيانات الدخول في المتصفح.": "Could not save login details in the browser.", "🔒 تسجيل الخروج": "🔒 Sign out", "💨 دخان: تشغيل": "💨 Smoke: on", "💨 دخان: إيقاف": "💨 Smoke: off", "تعذر الحفظ في المتصفح. حمّل نسخة احتياطية الآن.": "Could not save in the browser. Download a backup now.", "تعذر الاتصال بشركة الشحن. غالبًا المتصفح بيمنع الطلب المباشر (CORS). أضف رابط Proxy في إعدادات البراند (الخطوات في README).": "Could not reach the carrier. The browser is probably blocking the direct request (CORS). Add a Proxy URL in the brand settings.", "شركة الشحن لم تجد هذه الشحنة. لم تُسجل.": "The carrier did not find this shipment. Not recorded.", "بوسطة لم ترجع بيانات للشحنة. لم تُسجل.": "Bosta returned no data for this shipment. Not recorded.", "امسح شحنة بوسطة حقيقية الأول، وبعدين اضغط الزرار.": "Scan a real Bosta shipment first, then press the button.", "تم نسخ رد بوسطة (بعد حجب بيانات العميل). الصقه في الشات.": "Bosta response copied (customer data masked). Paste it in the chat.", "تعذر النسخ.": "Copy failed.", "تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت وحاول تاني.": "Could not load the Excel library. Check your internet connection and try again.", "تعذر إنشاء ملف Excel.": "Could not create the Excel file.", "كل الشحنات محدّثة (مستلمة أو مرتجعة).": "All shipments are up to date (received or returned).", "طلبات صادرة": "Outgoing orders", "نسبة المرتجع": "Return rate", "صافي القطع": "Net items", "صافي COD": "Net COD", "صافي الشحن": "Net shipping", "شحنات مستلمة": "Received shipments", "مرتجعة / لم تُستلم": "Returned / not received", "قيد التوصيل": "In delivery", "نسبة الاستلام": "Receipt rate", "نسبة المرتجع (من المحسوم)": "Return rate (of settled)", "عملاء استلموا": "Customers who received", "عملاء لم يستلموا": "Customers who did not receive", "عملاء متكررون": "Repeat customers", "لوحة التحليلات": "Analytics dashboard", "الصادر مقابل المرتجع يوميًا": "Outgoing vs returns per day", "حالة الشحنات الصادرة": "Outgoing shipment status", "مستلمة": "Received", "مرتجعة": "Returned", "الحالات لسه ماتحدثتش. اضغط \"تحديث حالات الشحنات من بوسطة\".": "Statuses are not updated yet. Press \"Refresh shipment statuses from Bosta\".", "الاستلام والعملاء": "Receipts & customers", "أعلى المحافظات": "Top governorates", "أعلى المنتجات": "Top products", "المحافظات": "Governorates", "المنتجات (حسب وصف الشحنة)": "Products (by shipment description)", "العملاء": "Customers", "الطلبات": "Orders", "استلم": "Received", "لا بيانات في الفترة دي.": "No data in this period.", "غير محدد": "Unspecified", "مفيش بيانات عملاء. بيانات العميل بتتسجل مع الشحنات الجديدة، والقديمة بتتكمل بزرار التحديث.": "No customer data. Customer data is saved with new shipments; older ones are filled in by the refresh button.", "الطلبات الصادرة والمرتجعة يوميًا": "Outgoing and returned orders per day", "توزيع حالات الشحنات": "Shipment status distribution", "المنتج": "Product"}));let LANG='ar';try{LANG=localStorage.getItem('scanapp.lang')==='en'?'en':'ar'}catch{}
 for(const[k,v]of Object.entries({'👥 المستخدمون':'👥 Users'}))EN.set(k,v);
 for(const[k,v]of Object.entries({'🔑 كلمة مرور حسابي':'🔑 My password','البريد الإلكتروني':'Email','الاسم':'Name','ليس لديك حساب؟ اطلب حساب جديد':'No account? Request one','تسجيل الدخول':'Sign in','مسؤول':'Admin','موظف':'Staff'}))EN.set(k,v);
+for(const[k,v]of Object.entries({'🔄 تحديث البيانات':'🔄 Refresh data'}))EN.set(k,v);
 const T=(a,e)=>LANG==='en'?e:a,tt=a=>LANG==='en'&&EN.has(a)?EN.get(a):a;
 function loc(root){const w=document.createTreeWalker(root,4);let n;
  while(n=w.nextNode()){const c=n.nodeValue,o=n.__o!==undefined&&c===n.__t?n.__o:c,k=o.trim();if(!EN.has(k))continue;const v=LANG==='en'?o.replace(k,()=>EN.get(k)):o;if(c!==v){n.__o=o;n.__t=v;n.nodeValue=v}}
  for(const el of root.querySelectorAll('[title],[aria-label]'))for(const a of['title','aria-label']){const c=el.getAttribute(a);if(c==null)continue;const m=el['_'+a],o=m&&c===m[1]?m[0]:c;if(!EN.has(o))continue;const v=LANG==='en'?EN.get(o):o;if(c!==v){el['_'+a]=[o,v];el.setAttribute(a,v)}}}
-const DEF={brands:[{id:'rchive',name:'Rchive',color:'#1f6f5c',carrier:'bosta'},{id:'seven',name:'SEVEN',color:'#2b4fa3',carrier:'bosta'},{id:'jeanetics',name:'Jeanetics',color:'#7a3b8f',carrier:'bosta'}],scans:{},dups:{},active:'rchive'};
-let S=(()=>{try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&v.brands)return v}catch{}return structuredClone(DEF)})();
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{msg('تعذر الحفظ في المتصفح. حمّل نسخة احتياطية الآن.','err')}};
-const B=()=>S.brands.find(b=>b.id===S.active)||S.brands[0];
+/* ===== البيانات أونلاين (Supabase) ===== */
+const AKEY='scanapp.active',blank=()=>({brands:[],scans:{},dups:{},active:'',removed:[],synced:0});
+let S=blank(),dpoll=0,pend=0;
+const nz=v=>v==null?null:Number(v);
+const mp=r=>({id:r.id,tn:r.tn,at:r.created_at||r.at,ver:r.ver,kind:r.kind,gov:r.gov,cod:nz(r.cod),fees:nz(r.fees),items:nz(r.items),desc:r.descr,doc:r.doc,st:r.st,bt:r.bt,cn:r.cn,cp:r.cp,chk:r.chk});
+const ERR={
+ no_key:['مفتاح الـ API غير مضاف لهذا البراند. اطلب من المسؤول إضافته من الإعدادات.','The API key is missing for this brand. Ask the admin to add it in settings.'],
+ no_tpl:['رابط التحقق غير مضاف في إعدادات هذا البراند.','The verification URL is missing in this brand\'s settings.'],
+ net:['تعذر الاتصال بشركة الشحن. لم تُسجل.','Could not reach the carrier. Not recorded.'],
+ not_found:['شركة الشحن لم تجد هذه الشحنة. لم تُسجل.','The carrier did not find this shipment. Not recorded.'],
+ key_rejected:['مفتاح الـ API مرفوض من شركة الشحن. راجع المفتاح في الإعدادات.','The carrier rejected the API key. Check it in settings.'],
+ http:['فشل التحقق من شركة الشحن. لم تُسجل.','Carrier verification failed. Not recorded.'],
+ no_data:['بوسطة لم ترجع بيانات للشحنة. لم تُسجل.','Bosta returned no data for this shipment. Not recorded.'],
+ bad_tn:['رقم الشحنة غير صالح.','Invalid tracking number.'],
+ unauthorized:['انتهت الجلسة. سجّل الدخول من جديد.','Session expired. Please sign in again.'],
+ forbidden:['ليس لديك صلاحية لهذا الإجراء أو هذا البراند.','You do not have permission for this action or brand.'],
+ no_brand:['البراند غير موجود.','Brand not found.'],
+ no_row:['الشحنة غير موجودة.','Shipment not found.'],
+ db:['تعذر الحفظ في قاعدة البيانات.','Could not save to the database.']
+};
+const errT=(c,d)=>{const e=ERR[c];if(!e)return T('خطأ غير متوقع: ','Unexpected error: ')+c;return T(e[0],e[1])+(c==='http'&&d&&d.status?` (HTTP ${d.status})`:'')+(c==='db'&&d&&d.message?` — ${d.message}`:'')};
+async function fx(name,body){
+ try{const{data,error}=await sb.functions.invoke(name,{body});if(!error)return{data};
+  let d=null;try{d=await error.context.json()}catch{}
+  return{err:(d&&d.error)||error.message||'network',d}}
+ catch(e){return{err:e.message||'network'}}
+}
+async function pages(q){const o=[];for(let f=0;;f+=1000){const{data,error}=await q(f,f+999);if(error)throw error;o.push(...data);if(data.length<1000)break}return o}
+async function loadBrand(id,quiet){
+ if(!id||!sb)return;
+ try{const[a,d]=await Promise.all([pages((f,t)=>sb.from('scans').select('*').eq('brand_id',id).order('created_at').order('id').range(f,t)),pages((f,t)=>sb.from('dups').select('*').eq('brand_id',id).order('created_at').range(f,t))]);
+  S.scans[id]=a.map(mp);S.dups[id]=d.map(x=>({tn:x.tn,kind:x.kind,at:x.created_at||x.at,rz:!!x.rz}));S.synced=Date.now();sync()}
+ catch(e){if(!quiet)msg(T('تعذر تحميل البيانات: ','Could not load data: ')+(e.message||e),'err')}
+}
+async function loadBrands(){
+ const{data,error}=await sb.from('brands').select('*');if(error)throw error;
+ let ks=[];if(isAdm()){const r=await sb.rpc('app_keys_set');ks=r.data||[]}
+ const hx=v=>/^#[0-9a-f]{6}$/i.test(v||'');
+ S.brands=data.map(r=>{const c=r.cfg||{};return{id:r.id,name:r.name||r.id,color:hx(c.color)?c.color:'#1f6f5c',carrier:c.carrier||'bosta',tpl:c.tpl||'',pre:c.pre||'',bgType:c.bgType||'',bgColor:c.bgColor||'',bgImg:c.bgImg||'',logo:c.logo||'',sort:Number.isFinite(c.sort)?c.sort:999,keySet:ks.includes(r.id)}}).sort((a,b)=>a.sort-b.sort||String(a.name).localeCompare(String(b.name)));
+ let a='';try{a=localStorage.getItem(AKEY)||''}catch{}
+ S.active=S.brands.some(b=>b.id===a)?a:(S.brands[0]&&S.brands[0].id)||'';
+}
+function sync(){const e=$('#sync');if(e&&S.synced)e.textContent=T('آخر تحديث ','Last sync ')+new Date(S.synced).toLocaleTimeString(LANG==='en'?'en-GB':'ar-EG',{timeZone:'Africa/Cairo',hour:'2-digit',minute:'2-digit'})}
+function startDPoll(){clearInterval(dpoll);dpoll=setInterval(async()=>{if(document.hidden||!ME||pend||rfBusy)return;await loadBrand(S.active,true);render()},30000)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME&&Date.now()-S.synced>20000)loadBrand(S.active,true).then(render)});
+const B=()=>S.brands.find(b=>b.id===S.active)||S.brands[0]||{id:'',name:'',color:'#1f6f5c'};
 const L=id=>S.scans[id]||(S.scans[id]=[]),D=id=>S.dups[id]||(S.dups[id]=[]);
 const cairo=iso=>new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo'}).format(new Date(iso));
 const ft=iso=>new Date(iso).toLocaleString(LANG==='en'?'en-GB':'ar-EG',{timeZone:'Africa/Cairo'});
@@ -158,7 +205,7 @@ function render0(){
  $('#tw').hidden=view==='an';$('#an').hidden=view!=='an';
  if(view==='an')return an(all);
  const l=view==='ret'?ret:out;
- $('#rows').innerHTML=l.length?l.slice(-200).reverse().map(s=>{const k=s.kind||'delivery';return `<tr><td class="t">${esc(s.tn)}</td><td><button class="kd k-${k}" data-k="${esc(s.id)}" title="${esc((s.bt||'')+' / '+(s.st||''))} — ${T('اضغط لتغيير النوع','click to change type')}">${tt(KL[k])}</button></td><td>${esc(ft(s.at))}</td><td>${esc(s.cn||'—')}<br><small style="color:var(--mut);unicode-bidi:plaintext">${esc(s.cp||'')}</small></td><td>${esc(s.gov||'—')}</td><td>${esc(s.items??'—')}</td><td>${esc(s.desc||s.doc||'—')}</td><td>${esc(s.cod??'—')}</td><td>${esc(s.fees??'—')}</td><td>${esc(s.st||(s.ver==='VERIFIED'?'—':'بدون تحقق'))}</td><td><button class="x" data-del="${esc(s.id)}">حذف</button></td></tr>`}).join(''):`<tr><td colspan="11">${view==='ret'?'لا توجد مرتجعات لهذا البراند.':'لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.'}</td></tr>`;
+ $('#rows').innerHTML=l.length?l.slice(-200).reverse().map(s=>{const k=s.kind||'delivery';return `<tr><td class="t">${esc(s.tn)}</td><td><button class="kd k-${k}" data-k="${esc(s.id)}" title="${esc((s.bt||'')+' / '+(s.st||''))} — ${T('اضغط لتغيير النوع','click to change type')}">${tt(KL[k])}</button></td><td>${esc(ft(s.at))}</td><td>${esc(s.cn||'—')}<br><small style="color:var(--mut);unicode-bidi:plaintext">${esc(s.cp||'')}</small></td><td>${esc(s.gov||'—')}</td><td>${esc(s.items??'—')}</td><td>${esc(s.desc||s.doc||'—')}</td><td>${esc(s.cod??'—')}</td><td>${esc(s.fees??'—')}</td><td>${esc(s.st||(s.ver==='VERIFIED'?'—':'بدون تحقق'))}</td><td><button class="x" data-del="${esc(s.id)}">حذف</button></td></tr>`}).join(''):`<tr><td colspan="11">${!S.brands.length?T('لا توجد براندات مُسندة لحسابك. تواصل مع المسؤول.','No brands are assigned to your account. Contact the admin.'):view==='ret'?'لا توجد مرتجعات لهذا البراند.':'لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.'}</td></tr>`;
 }
 const OCD=/^\s*delivered/i,OCR=/returned|rto/i,ck=s=>String(s.cp||'').replace(/\D/g,'').slice(-10)||(s.cn||'').trim()||'—';
 function outcomes(all,l){
@@ -231,41 +278,29 @@ const num=v=>Number.isFinite(Number(v))&&v!==''&&v!=null?Number(v):null;
 const find=(o,k,n=0)=>{if(!o||typeof o!=='object'||n>6)return;if(o[k]&&typeof o[k]==='object')return o[k];for(const v of Object.values(o)){const r=find(v,k,n+1);if(r)return r}};
 const red=o=>Array.isArray(o)?o.map(red):o&&typeof o==='object'?Object.fromEntries(Object.entries(o).map(([k,v])=>[k,/first|last|full|phone|mail|line|note|floor|apart|build|lat|lng|long/i.test(k)&&typeof v!=='object'?'[محجوب]':red(v)])):o;
 const tx=v=>typeof v==='string'?v:'';
-async function verify(b,tn){
- if(!b.carrier||b.carrier==='none')return{ver:'UNVERIFIED',ship:{},kind:'delivery'};
- if(!b.apiKey)throw new Error(T(`مفتاح الـ API غير مضاف لـ ${b.name}. افتح الإعدادات وأضفه.`,`API key is missing for ${b.name}. Open settings and add it.`));
- let url,auth=b.apiKey;
- if(b.carrier==='bosta')url='https://app.bosta.co/api/v2/deliveries/business/'+encodeURIComponent(tn);
- else{if(!b.tpl)throw new Error(T('رابط التحقق غير مضاف في إعدادات ','Verification URL is missing in settings of ')+b.name);url=b.tpl.replace('{tracking}',encodeURIComponent(tn));auth=(b.pre||'')+b.apiKey}
- const px=(b.proxy||'').trim().replace(/\/$/,''),h={Authorization:auth};let r;
- try{r=await fetch(px?px+'/?url='+encodeURIComponent(url):url,{headers:h})}
- catch{throw new Error('تعذر الاتصال بشركة الشحن. غالبًا المتصفح بيمنع الطلب المباشر (CORS). أضف رابط Proxy في إعدادات البراند (الخطوات في README).')}
- if(r.status===404)throw new Error('شركة الشحن لم تجد هذه الشحنة. لم تُسجل.');
- if(r.status===401||r.status===403)throw new Error(T('مفتاح الـ API مرفوض لـ ','API key rejected for ')+b.name+T('. راجع المفتاح.','. Check the key.'));
- if(!r.ok)throw new Error(T('فشل التحقق (HTTP ','Verification failed (HTTP ')+r.status+T('). لم تُسجل.','). Not recorded.'));
- if(b.carrier!=='bosta')return{ver:'VERIFIED',ship:{},kind:'delivery'};
- const p=await r.json().catch(()=>null),d=p&&p.data;
- if(!p||p.success!==true||!d||typeof d!=='object')throw new Error('بوسطة لم ترجع بيانات للشحنة. لم تُسجل.');
- lastRaw=d;
- const rc=d.receiver||{},pk=find(d,'packageDetails')||{},ty=d.type,tc=Number(ty&&ty.code!=null?ty.code:ty),tv=tx(ty&&ty.value)||tx(ty),st=tx(d.state&&d.state.value)||tx(d.maskedState);
- const kind=(tc===25||/return/i.test(tv)||/return|rto/i.test(st))?'return':(tc===30||/exchange/i.test(tv))?'exchange':'delivery';
- return{ver:'VERIFIED',kind,ship:{gov:(d.city&&d.city.name)||(d.dropOffAddress&&d.dropOffAddress.city&&d.dropOffAddress.city.name)||'',cod:num(d.cod),fees:num(d.shipmentFees),items:num(pk.itemsCount),desc:tx(pk.description),doc:tx(pk.document),st,bt:tv||(isNaN(tc)?'':tc),cn:tx(rc.fullName)||[tx(rc.firstName),tx(rc.lastName)].join(' ').trim(),cp:String(rc.phone||'')}};
-}
 async function handle(b,tn){
  if(!/^[A-Za-z0-9\-_.]{1,100}$/.test(tn)){msg(T('رقم الشحنة غير صالح: ','Invalid tracking number: ')+tn,'err');beep(220,400);return}
- let r;try{r=await verify(b,tn)}catch(e){msg(e.message,'err');beep(220,400);return}
- const k=r.kind,e=L(b.id).find(s=>s.tn.toLowerCase()===tn.toLowerCase()&&(s.kind||'delivery')===k);
- if(e){D(b.id).push({tn,kind:k,at:new Date().toISOString()});save();render();msg(T(`مكررة: ${tn} مسجلة قبل كده كـ${tt(KL[k])} في ${b.name} (${ft(e.at)}). لم تُضف.`,`Duplicate: ${tn} was already recorded as ${tt(KL[k])} in ${b.name} (${ft(e.at)}). Not added.`),'warn');beep(220,400);return}
- const sg=k==='return'?-1:1,sh=r.ship,ng=v=>v==null?null:sg*Math.abs(v);
- L(b.id).push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),tn,at:new Date().toISOString(),ver:r.ver,kind:k,...sh,items:ng(sh.items),cod:ng(sh.cod),fees:ng(sh.fees)});
- save();render();
- const miss=r.ver==='VERIFIED'&&b.carrier==='bosta'&&sh.items==null?T(' ⚠ بوسطة لم ترجع عدد القطع (اضغط "نسخ رد بوسطة" وابعته للتشخيص).',' ⚠ Bosta did not return the items count (press "Copy last Bosta response" and send it for debugging).'):'';
- msg(T(`تمت إضافة ${tn} (${tt(KL[k])}) إلى ${b.name}`,`Added ${tn} (${tt(KL[k])}) to ${b.name}`)+(r.ver==='VERIFIED'?T(' بعد التحقق.',' after verification.'):T(' (بدون تحقق).',' (unverified).'))+miss,miss||k==='return'||r.ver!=='VERIFIED'?'warn':'ok');beep(880,90);
+ const r=await fx('scan',{brand:b.id,tn}),d=r.data,er=r.err||(d&&d.error);
+ if(er){msg(errT(er,r.d||d),'err');beep(220,400);if(er==='unauthorized')lockUI();return}
+ if(d.status==='duplicate'){
+  const k=(d.existing&&d.existing.kind)||(d.dup&&d.dup.kind)||'delivery',at=d.existing&&(d.existing.created_at||d.existing.at);
+  D(b.id).push({tn,kind:k,at:(d.dup&&(d.dup.created_at||d.dup.at))||new Date().toISOString(),rz:false});render();
+  msg(T(`مكررة: ${tn} مسجلة قبل كده كـ${tt(KL[k])} في ${b.name}${at?` (${ft(at)})`:''}. لم تُضف.`,`Duplicate: ${tn} was already recorded as ${tt(KL[k])} in ${b.name}${at?` (${ft(at)})`:''}. Not added.`),'warn');beep(220,400);return}
+ if(d.status==='added'){
+  const s=mp(d.row),k=s.kind;L(b.id).push(s);if(d.raw)lastRaw=d.raw;render();
+  const miss=s.ver==='VERIFIED'&&b.carrier==='bosta'&&s.items==null?T(' ⚠ بوسطة لم ترجع عدد القطع (اضغط "نسخ رد بوسطة" وابعته للتشخيص).',' ⚠ Bosta did not return the items count (press "Copy last Bosta response" and send it for debugging).'):'';
+  msg(T(`تمت إضافة ${tn} (${tt(KL[k])}) إلى ${b.name}`,`Added ${tn} (${tt(KL[k])}) to ${b.name}`)+(s.ver==='VERIFIED'?T(' بعد التحقق.',' after verification.'):T(' (بدون تحقق).',' (unverified).'))+miss,miss||k==='return'||s.ver!=='VERIFIED'?'warn':'ok');beep(880,90);return}
+ msg(errT('unexpected'),'err');
 }
 let chain=Promise.resolve();
-$('#tn').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const tn=e.target.value.trim();e.target.value='';if(!tn)return;const b=B();chain=chain.then(()=>handle(b,tn))});
-$('#tabs').onclick=e=>{const id=e.target.dataset.id;if(id){S.active=id;save();render();$('#msg').className='';$('#tn').focus()}};
-$('#rows').onclick=e=>{const id=e.target.dataset.del;if(!id||!isAdm())return;const b=B(),s=L(b.id).find(x=>x.id===id);if(s&&confirm(T(`حذف الشحنة ${s.tn} من ${b.name}؟`,`Delete shipment ${s.tn} from ${b.name}?`))){S.scans[b.id]=L(b.id).filter(x=>x.id!==id);save();render()}};
+$('#tn').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const tn=e.target.value.trim();e.target.value='';if(!tn)return;const b=B();pend++;chain=chain.then(()=>handle(b,tn)).catch(er=>msg(T('خطأ غير متوقع: ','Unexpected error: ')+(er.message||er),'err')).finally(()=>{pend--})});
+$('#tabs').onclick=async e=>{const id=e.target.dataset.id;if(!id)return;S.active=id;try{localStorage.setItem(AKEY,id)}catch{}render();$('#sync').textContent='…';await loadBrand(id);render();$('#msg').className='';$('#tn').focus()};
+$('#rl').onclick=async()=>{$('#sync').textContent='…';await loadBrand(S.active);render()};
+$('#rows').onclick=async e=>{const id=e.target.dataset.del;if(!id||!isAdm())return;const b=B(),s=L(b.id).find(x=>String(x.id)===id);
+ if(!s||!confirm(T(`حذف الشحنة ${s.tn} من ${b.name}؟`,`Delete shipment ${s.tn} from ${b.name}?`)))return;
+ const{data,error}=await sb.from('scans').delete().eq('id',id).select('id');
+ if(error||!data||!data.length){msg(T('تعذر الحذف (لا توجد صلاحية أو مشكلة في الاتصال).','Could not delete (no permission or connection problem).'),'err');return}
+ S.scans[b.id]=L(b.id).filter(x=>String(x.id)!==id);render()};
 function dlf(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
 const sel=()=>$('#dd').value||cairo(new Date().toISOString());
 const lbl=()=>{$('#dl').textContent=$('#dm').value==='m'?'📥 تحميل تقرير الشهر Excel':'📥 تحميل تقرير اليوم Excel'};
@@ -306,20 +341,27 @@ async function xlsx(){
  bt.disabled=false;
 }
 $('#dl').onclick=xlsx;
-$('#dz').onclick=()=>{const b=B(),n=D(b.id).filter(x=>!x.rz).length;if(!n)return;if(confirm(T(`تصفير عداد المحاولات المكررة (${n}) لـ ${b.name}؟ التقارير المحفوظة لن تتأثر.`,`Reset the duplicate attempts counter (${n}) for ${b.name}? Saved reports are not affected.`))){D(b.id).forEach(x=>{x.rz=1});save();render()}};
+$('#dz').onclick=async()=>{const b=B(),n=D(b.id).filter(x=>!x.rz).length;if(!n)return;
+ if(!confirm(T(`تصفير عداد المحاولات المكررة (${n}) لـ ${b.name}؟ التقارير المحفوظة لن تتأثر.`,`Reset the duplicate attempts counter (${n}) for ${b.name}? Saved reports are not affected.`)))return;
+ const{error}=await sb.rpc('app_reset_dups',{p_brand:b.id});if(error){msg(T('تعذر التصفير: ','Could not reset: ')+error.message,'err');return}
+ D(b.id).forEach(x=>{x.rz=1});render()};
 $('#dbg').onclick=()=>{if(!lastRaw)return msg('امسح شحنة بوسطة حقيقية الأول، وبعدين اضغط الزرار.','warn');navigator.clipboard.writeText(JSON.stringify(red(lastRaw),null,1)).then(()=>msg('تم نسخ رد بوسطة (بعد حجب بيانات العميل). الصقه في الشات.','ok'),()=>msg('تعذر النسخ.','err'))};
 document.querySelector('.vt').onclick=e=>{if(e.target.dataset.v){view=e.target.dataset.v;render();$('#tn').focus()}};$('#per').onchange=$('#cs').onchange=$('#dd').onchange=render;$('#dm').onchange=lbl;
 let rfBusy=false;
 $('#rf').onclick=async()=>{
  if(rfBusy)return;const b=B(),st=$('#rfs'),rs=new Set(L(b.id).filter(s=>s.kind==='return').map(s=>s.tn.toLowerCase()));
- const todo=L(b.id).filter(s=>s.kind!=='return'&&s.ver==='VERIFIED'&&!rs.has(s.tn.toLowerCase())&&!OCD.test(s.st||'')&&!OCR.test(s.st||'')).sort((a,c)=>(a.chk||'').localeCompare(c.chk||'')).slice(0,100);
- if(!todo.length){st.textContent='كل الشحنات محدّثة (مستلمة أو مرتجعة).';return}
+ const todo=L(b.id).filter(s=>s.kind!=='return'&&s.ver==='VERIFIED'&&!rs.has(s.tn.toLowerCase())&&!OCD.test(s.st||'')&&!OCR.test(s.st||'')).sort((a,c)=>String(a.chk||'').localeCompare(String(c.chk||''))).slice(0,100);
+ if(!todo.length){st.textContent=T('كل الشحنات محدّثة (مستلمة أو مرتجعة).','All shipments are up to date (received or returned).');return}
  rfBusy=true;let ok=0,bad=0;
  for(const s of todo){st.textContent=T(`جاري التحديث ${ok+bad+1}/${todo.length}…`,`Refreshing ${ok+bad+1}/${todo.length}…`);
-  try{const h=(await verify(b,s.tn)).ship;s.st=h.st;s.bt=h.bt;s.cn=s.cn||h.cn;s.cp=s.cp||h.cp;s.gov=s.gov||h.gov;s.desc=s.desc||h.desc;s.doc=s.doc||h.doc;if(s.items==null&&h.items!=null)s.items=h.items;ok++}catch{bad++}
-  s.chk=new Date().toISOString();await new Promise(r=>setTimeout(r,250))}
- save();rfBusy=false;st.textContent=T(`تم تحديث ${ok} شحنة`,`Updated ${ok} shipments`)+(bad?T(` وفشل ${bad}`,` and ${bad} failed`):'')+(todo.length===100?T(' — اضغط تاني لتحديث الباقي.',' — press again to update the rest.'):'.');render()};
-$('#rows').addEventListener('click',e=>{const id=e.target.dataset.k;if(!id||!(isAdm()||(ME&&ME.perms.edit)))return;const s=L(B().id).find(x=>x.id===id);if(!s)return;const o=['delivery','exchange','return'],n=o[(o.indexOf(s.kind||'delivery')+1)%3];if((n==='return')!==(s.kind==='return'))['items','cod','fees'].forEach(k=>{if(s[k]!=null)s[k]=-s[k]});s.kind=n;save();render()});
+  const r=await fx('scan',{mode:'refresh',id:s.id,brand:b.id});
+  if(r.err||!r.data||r.data.error||!r.data.row)bad++;else{const i=L(b.id).findIndex(x=>String(x.id)===String(s.id));if(i>=0)L(b.id)[i]=mp(r.data.row);ok++}
+  await new Promise(r=>setTimeout(r,250))}
+ rfBusy=false;st.textContent=T(`تم تحديث ${ok} شحنة`,`Updated ${ok} shipments`)+(bad?T(` وفشل ${bad}`,` and ${bad} failed`):'')+(todo.length===100?T(' — اضغط تاني لتحديث الباقي.',' — press again to update the rest.'):'.');render()};
+$('#rows').addEventListener('click',async e=>{const id=e.target.dataset.k;if(!id||!(isAdm()||(ME&&ME.perms.edit)))return;const b=B();
+ const{data,error}=await sb.rpc('app_cycle_kind',{p_id:id});
+ if(error||!data){msg(T('تعذر تغيير النوع: ','Could not change type: ')+(error?error.message:''),'err');return}
+ const i=L(b.id).findIndex(x=>String(x.id)===id);if(i>=0)L(b.id)[i]=mp(data);render()});
 const fld=(i,k,l,v,t='text',h='',c='')=>`<div class="f"><label>${l}</label><input type="${t}" class="${c}" data-i="${i}" data-k="${k}" value="${esc(v||'')}">${h?`<small>${h}</small>`:''}</div>`;
 function cfgRows(){$('#bl').innerHTML=S.brands.map((b,i)=>`<fieldset><legend>${esc(b.name)}</legend>${fld(i,'name','اسم البراند',b.name)}${fld(i,'color','اللون',b.color,'color')}
 <div class="f"><label>خلفية الموقع</label><select data-i="${i}" data-k="bgType"><option value="" ${!b.bgType?'selected':''}>بدون (الافتراضي)</option><option value="color" ${b.bgType==='color'?'selected':''}>لون</option><option value="image" ${b.bgType==='image'?'selected':''}>صورة</option></select></div>
@@ -327,9 +369,9 @@ ${b.bgType==='color'?fld(i,'bgColor','لون الخلفية',b.bgColor||'#eceee8
 ${b.bgType==='image'?`<div class="f"><label>صورة الخلفية</label><input type="file" accept="image/*" data-up="bgImg" data-i="${i}">${b.bgImg?`<div class="pv"><img src="${esc(b.bgImg)}" alt=""><button type="button" data-clr="bgImg" data-i="${i}">إزالة الصورة</button></div>`:''}</div>`:''}
 <div class="f"><label>لوجو البراند</label><input type="file" accept="image/*" data-up="logo" data-i="${i}"><small>يظهر مكان عنوان "مسح الشحنات" أعلى الصفحة.</small>${b.logo?`<div class="pv"><img src="${esc(b.logo)}" alt=""><button type="button" data-clr="logo" data-i="${i}">إزالة اللوجو</button></div>`:''}</div>
 <div class="f"><label>شركة الشحن</label><select data-i="${i}" data-k="carrier"><option value="bosta" ${b.carrier==='bosta'?'selected':''}>Bosta (بوسطة)</option><option value="custom" ${b.carrier==='custom'?'selected':''}>شركة أخرى (رابط مخصص)</option><option value="none" ${b.carrier==='none'?'selected':''}>بدون تحقق</option></select></div>
-${fld(i,'apiKey','مفتاح الـ API لهذا البراند',b.apiKey,'password','يُحفظ في هذا المتصفح فقط. الأفضل مفتاح Read Only.')}
+<div class="f"><label>مفتاح الـ API لهذا البراند</label><input type="password" class="l" data-i="${i}" data-k="newKey" autocomplete="new-password" placeholder="${b.keySet?T('••••••• محفوظ على السيرفر — اكتب مفتاحًا جديدًا لاستبداله','••••••• saved on the server — type a new key to replace it'):T('الصق المفتاح هنا','Paste the key here')}"><small>${T('يُحفظ على السيرفر فقط ولا يظهر لأي موظف ولا يرجع للمتصفح. الأفضل مفتاح Read Only.','Stored on the server only; never shown to staff or sent back to the browser. A read-only key is best.')}</small></div>
+<div class="f"><button type="button" data-test="${i}">${T('اختبار الربط','Test connection')}</button> <span class="mut" data-tr="${i}"></span></div>
 ${fld(i,'tpl','رابط التحقق (للشركة الأخرى فقط)',b.tpl,'text','مثال: https://api.example.com/track/{tracking}','l')}${fld(i,'pre','بادئة المفتاح (مثال: Bearer )',b.pre,'text','','l')}
-${fld(i,'proxy','رابط Proxy (اختياري)',b.proxy,'text','لو ظهرت رسالة CORS ضع رابط الـ Worker هنا','l')}
 ${S.brands.length>1?`<button type="button" data-rm="${i}">حذف البراند</button>`:''}</fieldset>`).join('')}
 function gate(){if(!ME)return;const a=isAdm(),c=p=>a||!!ME.perms[p];
  document.querySelector('.sc').hidden=!c('scan');document.querySelector('[data-v=an]').hidden=!c('analytics');
@@ -345,11 +387,39 @@ function pwAsk(title){return new Promise(res=>{
  $('#pwx').onclick=()=>done(null);d.onclose=()=>done(null);d.showModal();$('#pw1').focus()})}
 $('#cpw').onclick=async()=>{if(!sb)return;const p=await pwAsk(T('كلمة مرور جديدة لحسابك','New password for your account'));if(!p)return;
  const{error}=await sb.auth.updateUser({password:p});msg(error?T('تعذر تغيير كلمة المرور: ','Could not change the password: ')+error.message:T('تم تغيير كلمة المرور.','Password changed.'),error?'err':'ok')};
-$('#cf').onclick=()=>{if(!isAdm())return;cfgRows();$('#dlg').showModal()};
-$('#add').onclick=()=>{readCfg();const n=prompt(T('اسم البراند الجديد؟','New brand name?'));if(!n)return;S.brands.push({id:'b'+Date.now().toString(36),name:n.trim(),color:'#555555',carrier:'bosta'});cfgRows()};
-$('#bl').onclick=e=>{const c=e.target.dataset.clr;if(c){readCfg();delete S.brands[e.target.dataset.i][c];cfgRows();return}const i=e.target.dataset.rm;if(i==null)return;readCfg();const b=S.brands[i];if(L(b.id).length&&!confirm(T(`${b.name} فيه ${L(b.id).length} شحنة. هتتمسح مع البراند. متأكد؟`,`${b.name} has ${L(b.id).length} shipments. They will be deleted with the brand. Are you sure?`)))return;S.brands.splice(i,1);delete S.scans[b.id];delete S.dups[b.id];cfgRows()};
+/* ----- إعدادات البراندات (للمسؤول فقط) ----- */
+let savedCfg=false;
+const localKeys=()=>{try{const v=JSON.parse(localStorage.getItem(KEY));return((v&&v.brands)||[]).filter(b=>b.apiKey&&S.brands.some(x=>x.id===b.id)).map(b=>({id:b.id,name:b.name,apiKey:b.apiKey}))}catch{return[]}};
+function migBox(){const lk=localKeys();$('#mig').innerHTML=lk.length?`<fieldset><legend>${T('مفاتيح قديمة في هذا المتصفح','Old keys in this browser')}</legend><p class="mut">${T(`لقينا ${lk.length} مفتاح بوسطة محفوظ في المتصفح ده من النسخة القديمة (${lk.map(x=>x.name).join('، ')}). انقلهم للسيرفر وهيتمسحوا من المتصفح.`,`Found ${lk.length} Bosta key(s) saved in this browser from the old version. Move them to the server; they will be removed from the browser.`)}</p><button type="button" id="mk" class="pri">${T('نقل المفاتيح للسيرفر','Move keys to the server')}</button> <span id="mkr" class="mut"></span></fieldset>`:''}
+$('#mig').onclick=async e=>{if(e.target.id!=='mk')return;const lk=localKeys(),r=$('#mkr');e.target.disabled=true;let ok=0;
+ for(const k of lk){const x=await sb.rpc('app_set_key',{p_brand:k.id,p_key:k.apiKey});if(!x.error)ok++}
+ try{const v=JSON.parse(localStorage.getItem(KEY));if(ok===lk.length){v.brands.forEach(b=>{delete b.apiKey});localStorage.setItem(KEY,JSON.stringify(v))}}catch{}
+ r.textContent=T(`تم نقل ${ok} من ${lk.length}.`,`Moved ${ok} of ${lk.length}.`);try{await loadBrands()}catch{}cfgRows();migBox()};
+$('#cf').onclick=()=>{if(!isAdm())return;S.removed=[];savedCfg=false;cfgRows();migBox();$('#dlg').showModal()};
+$('#dlg').addEventListener('close',async()=>{if(savedCfg){savedCfg=false;return}S.removed=[];try{await loadBrands()}catch{}render()});
+$('#cfg').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT')e.preventDefault()});
+$('#add').onclick=()=>{readCfg();const n=prompt(T('اسم البراند الجديد؟','New brand name?'));if(!n)return;S.brands.push({id:'b'+Date.now().toString(36),name:n.trim(),color:'#555555',carrier:'bosta',tpl:'',pre:'',isNew:true});cfgRows()};
+$('#bl').onclick=async e=>{const t=e.target;
+ if(t.dataset.test!=null){readCfg();const i=t.dataset.test,b=S.brands[i],o=document.querySelector(`[data-tr="${i}"]`);
+  if(b.isNew||(b.newKey&&b.newKey.trim())){o.textContent=T('احفظ الأول، وبعدين اختبر.','Save first, then test.');return}
+  o.textContent='…';const r=await fx('scan',{mode:'test',brand:b.id}),d=r.data,er=r.err||(d&&d.error);
+  o.textContent=er?'❌ '+errT(er,r.d||d):'✅ '+(d&&d.note==='unverified'?T('البراند على "بدون تحقق".','Brand is set to "no verification".'):T('الربط شغال والمفتاح مقبول.','Connected. The key is accepted.'));return}
+ const c=t.dataset.clr;if(c){readCfg();delete S.brands[t.dataset.i][c];cfgRows();return}
+ const i=t.dataset.rm;if(i==null)return;readCfg();const b=S.brands[i],n=L(b.id).length;
+ const x=prompt(T(`حذف البراند "${b.name}" هيمسح كل شحناته (${n}) من قاعدة البيانات نهائيًا لكل المستخدمين.\nاكتب اسم البراند للتأكيد:`,`Deleting "${b.name}" permanently removes all its shipments (${n}) from the database for every user.\nType the brand name to confirm:`));
+ if(x==null||x.trim()!==b.name)return;if(!b.isNew)S.removed.push(b.id);S.brands.splice(i,1);cfgRows()};
 function readCfg(){document.querySelectorAll('#bl [data-k]').forEach(el=>{S.brands[el.dataset.i][el.dataset.k]=el.value})}
-$('#sv').onclick=()=>{readCfg();if(!S.brands.some(b=>b.id===S.active))S.active=S.brands[0].id;save();$('#dlg').close();render()};
+$('#sv').onclick=async()=>{readCfg();const btn=$('#sv');btn.disabled=true;
+ try{
+  if(!S.brands.length)throw new Error(T('لازم يفضل براند واحد على الأقل.','At least one brand must remain.'));
+  for(const id of S.removed){const r=await sb.rpc('app_delete_brand',{p_brand:id});if(r.error)throw r.error}
+  for(let i=0;i<S.brands.length;i++){const b=S.brands[i];if(!String(b.name||'').trim())throw new Error(T('اسم البراند مطلوب.','Brand name is required.'));
+   const cfg={color:b.color,carrier:b.carrier||'bosta',tpl:b.tpl||'',pre:b.pre||'',bgType:b.bgType||'',bgColor:b.bgColor||'',bgImg:b.bgImg||'',logo:b.logo||'',sort:i};
+   const r=await sb.from('brands').upsert({id:b.id,name:b.name.trim(),cfg});if(r.error)throw r.error;
+   if(b.newKey&&b.newKey.trim()){const k=await sb.rpc('app_set_key',{p_brand:b.id,p_key:b.newKey.trim()});if(k.error)throw k.error}}
+  S.removed=[];savedCfg=true;$('#dlg').close();await loadBrands();await loadBrand(S.active);render()
+ }catch(e){alert(T('تعذر الحفظ: ','Save failed: ')+(e.message||e))}
+ btn.disabled=false};
 const TK='scanapp.theme';
 function theme(t,sv){document.documentElement.dataset.theme=t;const n=t==='dark';$('#th').textContent=n?'☀️ نمط نهاري':'🌙 نمط ليلي';$('#th').setAttribute('aria-pressed',n);if(sv)try{localStorage.setItem(TK,t)}catch{}}
 $('#th').onclick=()=>theme(document.documentElement.dataset.theme==='dark'?'light':'dark',1);
@@ -408,7 +478,7 @@ function adminStart(){loadUsers().then(()=>{lastP=pendN();if(lastP){msg(T(`عن�
 const SUPABASE_URL='https://rvlytvitcfmmyxpqdqqj.supabase.co',SUPABASE_KEY='sb_publishable_o2BLbNJbTPs66PASnf3osA_kZj9acBr';
 const KEEP_LOGIN=false; // true = يفضل المستخدم مسجّل دخول بعد إغلاق المتصفح (على جهاز شخصي فقط)
 const sb=(window.supabase&&/^https:\/\//.test(SUPABASE_URL)&&!/PASTE_/.test(SUPABASE_URL+SUPABASE_KEY))?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,storage:KEEP_LOGIN?window.localStorage:window.sessionStorage}}):null;
-function lockUI(){clearInterval(poll);ME=null;document.body.classList.add('locked');$('#le').textContent='';$('#lm').textContent='';$('#lp').value=$('#lc').value='';$('#lu').focus()}
+function lockUI(){clearInterval(poll);clearInterval(dpoll);ME=null;S=blank();render();document.body.classList.add('locked');$('#le').textContent='';$('#lm').textContent='';$('#lp').value=$('#lc').value='';$('#lu').focus()}
 function unlock(){document.body.classList.remove('locked');$('#tn').focus()}
 function applyRole(){$('#who').textContent=(ME.name||ME.email)+' · '+(isAdm()?T('مسؤول','Admin'):T('موظف','Staff'));$('#cf').hidden=!isAdm();$('#um').hidden=!isAdm()}
 function loginMode(on){signup=on;$('#lnw').hidden=!on;$('#lcw').hidden=!on;$('#lt').textContent=T(on?'طلب إنشاء حساب':'تسجيل الدخول',on?'Request an account':'Sign in');$('#lb').textContent=T(on?'إرسال الطلب':'دخول',on?'Send request':'Sign in');$('#lsw').textContent=T(on?'لديك حساب؟ سجّل الدخول':'ليس لديك حساب؟ اطلب حساب جديد',on?'Have an account? Sign in':'No account? Request one');$('#le').textContent='';$('#lm').textContent=''}
@@ -421,7 +491,8 @@ async function enter(session){
  if(pf.status==='pending')return fail(T('طلبك قيد المراجعة. هتقدر تدخل بعد موافقة المسؤول.','Your request is pending. You can sign in once the admin approves it.'));
  if(pf.status!=='approved')return fail(T('حسابك موقوف. تواصل مع المسؤول.','Your account is disabled. Contact the admin.'));
  ME={id:pf.id,email:pf.email,name:pf.name||'',role:pf.role,brands:pf.brands||[],perms:pf.perms||{}};
- applyRole();unlock();render();if(isAdm())adminStart();return true}
+ try{await loadBrands();await loadBrand(S.active)}catch(e){return fail(T('تعذر تحميل البيانات: ','Could not load data: ')+(e.message||e))}
+ applyRole();unlock();render();sync();startDPoll();if(isAdm())adminStart();return true}
 $('#lf').onsubmit=async e=>{e.preventDefault();const u=$('#lu').value.trim().toLowerCase(),p=$('#lp').value,er=$('#le'),b=$('#lb');er.textContent='';$('#lm').textContent='';
  if(!sb){er.textContent=T('لم يتم ضبط رابط ومفتاح Supabase أول السكريبت، أو تعذر تحميل المكتبة.','Supabase URL/key are not set at the top of the script, or the library failed to load.');return}
  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(u)){er.textContent=T('اكتب بريدًا إلكترونيًا صحيحًا.','Enter a valid email address.');return}
