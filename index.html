@@ -98,20 +98,13 @@ body:not(.locked) #lock{display:none}
 #smk{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9999}
 .pv{display:flex;align-items:center;gap:10px;margin-top:6px}.pv img{max-height:48px;max-width:140px;border:1px solid var(--line);border-radius:6px;background:var(--th)}
 .bt{display:flex;gap:6px;flex-wrap:wrap}
-.ur{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0 0 8px;background:var(--bg)}
-.ur .i{flex:1;min-width:170px}.ur .i small{color:var(--mut);unicode-bidi:plaintext}.ur .a{display:flex;gap:6px;flex-wrap:wrap}
-.v.d{background:var(--badbg);color:var(--bad)}
-.pg{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}.pg label{display:flex;gap:8px;align-items:center;font-weight:400}
-@media(max-width:560px){.pg{grid-template-columns:1fr}}
-#udlg{max-width:720px}
-.kd:disabled{opacity:1;cursor:default}
-#lq{display:block;background:none;border:0;color:var(--c);text-decoration:underline;padding:10px 0 0;margin-top:6px}
-#lock form .pri{width:100%}
+.who{font-size:13px;color:var(--mut);padding-inline:6px;align-self:center}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
 <body class="locked">
 <div class="w">
-<header><h1 id="ttl">مسح الشحنات</h1><div class="bt"><span id="who" class="mut" style="align-self:center"></span><button id="lg" type="button">🌐 English</button><button id="smb" type="button" aria-pressed="true">💨 دخان: تشغيل</button><button id="th" type="button" aria-pressed="false">🌙 نمط ليلي</button><button id="um" type="button" hidden>👥 المستخدمون</button><button id="cf" class="pri">إعدادات البراندات وشركات الشحن</button><button id="lo" type="button">🔒 تسجيل الخروج</button></div></header>
+<header><h1 id="ttl">مسح الشحنات</h1><div class="bt"><span class="who" id="who"></span><button id="lg" type="button">🌐 English</button><button id="smb" type="button" aria-pressed="true">💨 دخان: تشغيل</button><button id="th" type="button" aria-pressed="false">🌙 نمط ليلي</button><button id="cf" class="pri">إعدادات البراندات وشركات الشحن</button><button id="cpw" type="button">🔑 كلمة مرور حسابي</button><button id="lo" type="button">🔒 تسجيل الخروج</button></div></header>
 <nav class="tabs" id="tabs"></nav>
 <section class="sc"><label for="tn">امسح الباركود أو اكتب رقم الشحنة ثم Enter</label><input id="tn" autocomplete="off" autofocus><div id="msg" role="status"></div></section>
 <section class="st"><div><b id="s1">0</b><span>الصادر (توصيل واستبدال)</span></div><div><b id="s2">0</b><span>المرتجعات</span></div><div><b id="s3">0</b><span>حركات اليوم</span></div><div><b id="s4">0</b><span>محاولات مكررة</span><br><button type="button" id="dz" class="sm">تصفير العداد</button></div></section>
@@ -120,50 +113,22 @@ body:not(.locked) #lock{display:none}
 <div id="an" hidden><div class="tb"><label>الفترة <select id="per"><option value="month">شهر التاريخ المحدد</option><option value="day">اليوم المحدد</option><option value="all">الكل</option></select></label><label>ترتيب العملاء <select id="cs"><option value="t">الأكثر طلبًا</option><option value="r">الأكثر مرتجعًا</option></select></label><span class="sp"></span><span id="rfs" class="mut"></span><button id="rf">🔄 تحديث حالات الشحنات من بوسطة</button></div><div id="anb"></div></div>
 <div class="tw" id="tw"><table><thead><tr><th>رقم الشحنة</th><th>النوع</th><th>وقت المسح</th><th>العميل</th><th>المحافظة</th><th>القطع</th><th>الوصف</th><th>COD</th><th>الشحن</th><th>الحالة</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
 </div>
-<div id="lock"><form id="lf"><h2 id="lt">تسجيل الدخول</h2><p class="mut" id="ln" hidden>أول تشغيل: أنشئ حساب المسؤول (له تحكم كامل) للدخول للموقع.</p><div class="f" id="lnw" hidden><label for="lnm">الاسم</label><input id="lnm" autocomplete="name"></div><div class="f"><label for="lu" id="lul">الإيميل أو اسم المستخدم</label><input id="lu" class="l" autocomplete="username"></div><div class="f"><label for="lp">كلمة المرور</label><input type="password" id="lp" class="l" autocomplete="current-password"></div><div class="f" id="lcw" hidden><label for="lc">أعد كتابة كلمة المرور</label><input type="password" id="lc" class="l" autocomplete="new-password"></div><div id="le" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><button type="submit" class="pri" id="lb">دخول</button><button type="button" id="lq">طلب إنشاء حساب جديد</button></form></div>
+<div id="lock"><form id="lf"><h2 id="lt">تسجيل الدخول</h2><div class="f" id="lnw" hidden><label for="ln">الاسم</label><input id="ln" autocomplete="name"></div><div class="f"><label for="lu">البريد الإلكتروني</label><input id="lu" type="email" class="l" autocomplete="email"></div><div class="f"><label for="lp">كلمة المرور</label><input type="password" id="lp" class="l" autocomplete="current-password"></div><div class="f" id="lcw" hidden><label for="lc">أعد كتابة كلمة المرور</label><input type="password" id="lc" class="l" autocomplete="new-password"></div><div id="le" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><div id="lm" role="status" style="color:var(--ok);font-weight:600"></div><button type="submit" class="pri" id="lb">دخول</button> <button type="button" id="lsw">ليس لديك حساب؟ اطلب حساب جديد</button></form></div>
 <canvas id="smk" aria-hidden="true"></canvas>
-<dialog id="udlg"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h2 style="margin:0">المستخدمون</h2><button type="button" id="ux">إغلاق</button></div><div id="ub"></div></dialog>
-<dialog id="dlg"><form method="dialog" id="cfg"><h2>إعدادات البراندات</h2><div id="bl"></div><button type="button" id="add">+ إضافة براند</button> <button type="button" id="sv" class="pri">حفظ</button> <button type="button" id="cpw">تغيير كلمة المرور</button> <button value="x">إغلاق</button></form></dialog>
+<dialog id="dlg"><form method="dialog" id="cfg"><h2>إعدادات البراندات</h2><div id="bl"></div><button type="button" id="add">+ إضافة براند</button> <button type="button" id="sv" class="pri">حفظ</button> <button value="x">إغلاق</button></form></dialog>
 <dialog id="pwd"><form id="pwf"><h2 id="pwt">كلمة المرور</h2><div class="f"><label for="pw1">كلمة المرور</label><input type="password" id="pw1" class="l" autocomplete="off"></div><div class="f" id="pw2w" hidden><label for="pw2">أعد كتابتها للتأكيد</label><input type="password" id="pw2" class="l" autocomplete="off"></div><div id="pwe" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div><button type="submit" class="pri">تأكيد</button> <button type="button" id="pwx">إلغاء</button></form></dialog>
 <script>
 const $=s=>document.querySelector(s),KEY='scanapp.v1';
 const EN=new Map(Object.entries({"مسح الشحنات": "Shipment Scanner", "🌙 نمط ليلي": "🌙 Dark mode", "☀️ نمط نهاري": "☀️ Light mode", "إعدادات البراندات وشركات الشحن": "Brands & carriers settings", "امسح الباركود أو اكتب رقم الشحنة ثم Enter": "Scan the barcode or type the tracking number, then press Enter", "الصادر (توصيل واستبدال)": "Outgoing (delivery & exchange)", "المرتجعات": "Returns", "حركات اليوم": "Today's scans", "محاولات مكررة": "Duplicate attempts", "تصفير العداد": "Reset counter", "الصادر": "Outgoing", "صادر": "Outgoing", "التحليلات": "Analytics", "التاريخ": "Date", "نوع الفترة": "Period type", "يومي": "Daily", "شهري": "Monthly", "📥 تحميل تقرير اليوم Excel": "📥 Download daily Excel report", "📥 تحميل تقرير الشهر Excel": "📥 Download monthly Excel report", "نسخ رد بوسطة الأخير (تشخيص)": "Copy last Bosta response (debug)", "ينسخ رد بوسطة بعد حجب بيانات العميل": "Copies the Bosta response with customer data masked", "الفترة": "Period", "شهر التاريخ المحدد": "Month of selected date", "اليوم المحدد": "Selected day", "الكل": "All", "ترتيب العملاء": "Sort customers", "الأكثر طلبًا": "Most orders", "الأكثر مرتجعًا": "Most returns", "🔄 تحديث حالات الشحنات من بوسطة": "🔄 Refresh shipment statuses from Bosta", "رقم الشحنة": "Tracking no.", "النوع": "Type", "وقت المسح": "Scan time", "العميل": "Customer", "المحافظة": "Governorate", "القطع": "Items", "الوصف": "Description", "الشحن": "Shipping", "الحالة": "Status", "حذف": "Delete", "إعدادات البراندات": "Brand settings", "+ إضافة براند": "+ Add brand", "حفظ": "Save", "تغيير كلمة المرور": "Change password", "إغلاق": "Close", "كلمة المرور": "Password", "أعد كتابتها للتأكيد": "Repeat to confirm", "تأكيد": "Confirm", "إلغاء": "Cancel", "توصيل": "Delivery", "استبدال": "Exchange", "مرتجع": "Return", "بدون تحقق": "No verification", "تم التحقق": "Verified", "مبيعات": "Sales", "مرتجعات": "Returns", "الوقت": "Time", "التليفون": "Phone", "التحقق": "Verification", "لا توجد مرتجعات لهذا البراند.": "No returns for this brand.", "لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.": "No shipments for this brand. Start by scanning a barcode.", "اسم البراند": "Brand name", "اللون": "Color", "شركة الشحن": "Carrier", "Bosta (بوسطة)": "Bosta", "شركة أخرى (رابط مخصص)": "Other carrier (custom URL)", "مفتاح الـ API لهذا البراند": "API key for this brand", "يُحفظ في هذا المتصفح فقط. الأفضل مفتاح Read Only.": "Stored in this browser only. A read-only key is best.", "رابط التحقق (للشركة الأخرى فقط)": "Verification URL (other carriers only)", "مثال: https://api.example.com/track/{tracking}": "Example: https://api.example.com/track/{tracking}", "بادئة المفتاح (مثال: Bearer )": "Key prefix (e.g. Bearer )", "رابط Proxy (اختياري)": "Proxy URL (optional)", "لو ظهرت رسالة CORS ضع رابط الـ Worker هنا": "If a CORS error appears, put the Worker URL here", "حذف البراند": "Delete brand", "خلفية الموقع": "Site background", "بدون (الافتراضي)": "None (default)", "لون": "Color", "صورة": "Image", "لون الخلفية": "Background color", "صورة الخلفية": "Background image", "لوجو البراند": "Brand logo", "يظهر مكان عنوان \"مسح الشحنات\" أعلى الصفحة.": "Shown in place of the \"Shipment Scanner\" title at the top.", "إزالة الصورة": "Remove image", "إزالة اللوجو": "Remove logo", "كلمة مرور الإعدادات": "Settings password", "إنشاء كلمة مرور للإعدادات": "Create a settings password", "أدخل كلمة المرور الحالية": "Enter the current password", "كلمة المرور الجديدة": "New password", "كلمة المرور لازم تكون 4 حروف على الأقل.": "Password must be at least 4 characters.", "التأكيد غير مطابق.": "Confirmation does not match.", "تعذر حفظ كلمة المرور في المتصفح.": "Could not save the password in the browser.", "كلمة المرور غير صحيحة.": "Wrong password.", "تسجيل الدخول": "Sign in", "إنشاء حساب الدخول": "Create login", "أول تشغيل: أنشئ اسم مستخدم وكلمة مرور للدخول للموقع.": "First run: create a username and password for this site.", "اسم المستخدم": "Username", "أعد كتابة كلمة المرور": "Repeat password", "دخول": "Sign in", "حفظ ودخول": "Save & sign in", "اسم المستخدم مطلوب.": "Username is required.", "اسم المستخدم أو كلمة المرور غير صحيحة.": "Wrong username or password.", "تعذر حفظ بيانات الدخول في المتصفح.": "Could not save login details in the browser.", "🔒 تسجيل الخروج": "🔒 Sign out", "💨 دخان: تشغيل": "💨 Smoke: on", "💨 دخان: إيقاف": "💨 Smoke: off", "تعذر الحفظ في المتصفح. حمّل نسخة احتياطية الآن.": "Could not save in the browser. Download a backup now.", "تعذر الاتصال بشركة الشحن. غالبًا المتصفح بيمنع الطلب المباشر (CORS). أضف رابط Proxy في إعدادات البراند (الخطوات في README).": "Could not reach the carrier. The browser is probably blocking the direct request (CORS). Add a Proxy URL in the brand settings.", "شركة الشحن لم تجد هذه الشحنة. لم تُسجل.": "The carrier did not find this shipment. Not recorded.", "بوسطة لم ترجع بيانات للشحنة. لم تُسجل.": "Bosta returned no data for this shipment. Not recorded.", "امسح شحنة بوسطة حقيقية الأول، وبعدين اضغط الزرار.": "Scan a real Bosta shipment first, then press the button.", "تم نسخ رد بوسطة (بعد حجب بيانات العميل). الصقه في الشات.": "Bosta response copied (customer data masked). Paste it in the chat.", "تعذر النسخ.": "Copy failed.", "تعذر تحميل مكتبة Excel. تأكد من اتصال الإنترنت وحاول تاني.": "Could not load the Excel library. Check your internet connection and try again.", "تعذر إنشاء ملف Excel.": "Could not create the Excel file.", "كل الشحنات محدّثة (مستلمة أو مرتجعة).": "All shipments are up to date (received or returned).", "طلبات صادرة": "Outgoing orders", "نسبة المرتجع": "Return rate", "صافي القطع": "Net items", "صافي COD": "Net COD", "صافي الشحن": "Net shipping", "شحنات مستلمة": "Received shipments", "مرتجعة / لم تُستلم": "Returned / not received", "قيد التوصيل": "In delivery", "نسبة الاستلام": "Receipt rate", "نسبة المرتجع (من المحسوم)": "Return rate (of settled)", "عملاء استلموا": "Customers who received", "عملاء لم يستلموا": "Customers who did not receive", "عملاء متكررون": "Repeat customers", "لوحة التحليلات": "Analytics dashboard", "الصادر مقابل المرتجع يوميًا": "Outgoing vs returns per day", "حالة الشحنات الصادرة": "Outgoing shipment status", "مستلمة": "Received", "مرتجعة": "Returned", "الحالات لسه ماتحدثتش. اضغط \"تحديث حالات الشحنات من بوسطة\".": "Statuses are not updated yet. Press \"Refresh shipment statuses from Bosta\".", "الاستلام والعملاء": "Receipts & customers", "أعلى المحافظات": "Top governorates", "أعلى المنتجات": "Top products", "المحافظات": "Governorates", "المنتجات (حسب وصف الشحنة)": "Products (by shipment description)", "العملاء": "Customers", "الطلبات": "Orders", "استلم": "Received", "لا بيانات في الفترة دي.": "No data in this period.", "غير محدد": "Unspecified", "مفيش بيانات عملاء. بيانات العميل بتتسجل مع الشحنات الجديدة، والقديمة بتتكمل بزرار التحديث.": "No customer data. Customer data is saved with new shipments; older ones are filled in by the refresh button.", "الطلبات الصادرة والمرتجعة يوميًا": "Outgoing and returned orders per day", "توزيع حالات الشحنات": "Shipment status distribution", "المنتج": "Product"}));let LANG='ar';try{LANG=localStorage.getItem('scanapp.lang')==='en'?'en':'ar'}catch{}
+for(const[k,v]of Object.entries({'🔑 كلمة مرور حسابي':'🔑 My password','البريد الإلكتروني':'Email','الاسم':'Name','ليس لديك حساب؟ اطلب حساب جديد':'No account? Request one','تسجيل الدخول':'Sign in','مسؤول':'Admin','موظف':'Staff'}))EN.set(k,v);
 const T=(a,e)=>LANG==='en'?e:a,tt=a=>LANG==='en'&&EN.has(a)?EN.get(a):a;
-Object.entries({"👥 المستخدمون":"👥 Users","المستخدمون":"Users","طلب إنشاء حساب جديد":"Request a new account","← رجوع لتسجيل الدخول":"← Back to sign in","إرسال الطلب":"Send request","الاسم":"Name","الإيميل":"Email","الإيميل أو اسم المستخدم":"Email or username","إنشاء حساب المسؤول":"Create administrator account","أول تشغيل: أنشئ حساب المسؤول (له تحكم كامل) للدخول للموقع.":"First run: create the administrator account (full control) to access the site.","طلبات الدخول الجديدة":"New account requests","المستخدمون الحاليون":"Current users","مراجعة":"Review","مراجعة طلب جديد":"Review new request","تعديل مستخدم":"Edit user","تعديل":"Edit","تعطيل":"Disable","تفعيل":"Enable","حذف":"Delete","نشط":"Active","مسودة":"Draft","قيد المراجعة":"Pending review","طلب جديد":"New request","قالب الصلاحيات":"Permission template","تحكم كامل":"Full control","قارئ فقط":"Read only","قارئ + مسح + تقارير":"Reader + scan + reports","مخصص":"Custom","تقدر تعدّل أي صلاحية يدويًا بعد اختيار القالب.":"You can adjust any permission manually after choosing a template.","الصلاحيات":"Permissions","البراندات المسموحة":"Allowed brands","كل البراندات (بما فيها أي براند يُضاف لاحقًا)":"All brands (including any added later)","موافقة وحفظ":"Approve & save","حفظ":"Save","رفض الطلب وحذفه":"Reject request & delete","رجوع":"Back","إغلاق":"Close","لا توجد طلبات جديدة.":"No new requests.","لا يوجد مستخدمون.":"No users.","عرض الشحنات":"View shipments","التحليلات":"Analytics","المسح (إضافة شحنات)":"Scan (add shipments)","تقارير Excel":"Excel reports","التنقل بين البراندات":"Switch between brands","الإعدادات":"Settings","إدارة المستخدمين":"Manage users","حذف الشحنات":"Delete shipments","تغيير نوع الشحنة":"Change shipment type","تصفير عداد المكرر":"Reset duplicate counter","حفظ ودخول":"Save & sign in","تسجيل الدخول":"Sign in","دخول":"Sign in","كلمة المرور":"Password","أعد كتابة كلمة المرور":"Re-enter password"}).forEach(([k,v])=>{if(!EN.has(k))EN.set(k,v)});
 function loc(root){const w=document.createTreeWalker(root,4);let n;
  while(n=w.nextNode()){const c=n.nodeValue,o=n.__o!==undefined&&c===n.__t?n.__o:c,k=o.trim();if(!EN.has(k))continue;const v=LANG==='en'?o.replace(k,()=>EN.get(k)):o;if(c!==v){n.__o=o;n.__t=v;n.nodeValue=v}}
  for(const el of root.querySelectorAll('[title],[aria-label]'))for(const a of['title','aria-label']){const c=el.getAttribute(a);if(c==null)continue;const m=el['_'+a],o=m&&c===m[1]?m[0]:c;if(!EN.has(o))continue;const v=LANG==='en'?EN.get(o):o;if(c!==v){el['_'+a]=[o,v];el.setAttribute(a,v)}}}
 const DEF={brands:[{id:'rchive',name:'Rchive',color:'#1f6f5c',carrier:'bosta'},{id:'seven',name:'SEVEN',color:'#2b4fa3',carrier:'bosta'},{id:'jeanetics',name:'Jeanetics',color:'#7a3b8f',carrier:'bosta'}],scans:{},dups:{},active:'rchive'};
 let S=(()=>{try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&v.brands)return v}catch{}return structuredClone(DEF)})();
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{msg('تعذر الحفظ في المتصفح. حمّل نسخة احتياطية الآن.','err')}};
-/* ===== المستخدمون والصلاحيات (محلي بدون Supabase) ===== */
-const UK2='scanapp.users.v2',AK='scanapp.auth',OLD='scanapp.user.v1';
-const PERMS=[['view','عرض الشحنات'],['an','التحليلات'],['scan','المسح (إضافة شحنات)'],['xl','تقارير Excel'],['sw','التنقل بين البراندات'],['cfg','الإعدادات'],['usr','إدارة المستخدمين'],['del','حذف الشحنات'],['kind','تغيير نوع الشحنة'],['rz','تصفير عداد المكرر']];
-const ALLP=PERMS.map(x=>x[0]);
-const TPL={full:{n:'تحكم كامل',p:ALLP},ro:{n:'قارئ فقط',p:['view','an']},sc:{n:'قارئ + مسح + تقارير',p:['view','an','scan','xl','sw']}};
-const tplOf=ps=>Object.keys(TPL).find(k=>TPL[k].p.length===ps.length&&TPL[k].p.every(x=>ps.includes(x)))||'custom';
-function loadU(){let u=null;try{u=JSON.parse(localStorage.getItem(UK2))}catch{}if(Array.isArray(u))return u;
- try{const o=JSON.parse(localStorage.getItem(OLD));if(o&&o.u&&o.s&&o.h){u=[{id:'u0',name:o.u,email:o.u,s:o.s,h:o.h,status:'active',owner:1,tpl:'full',perms:[...ALLP],brands:'*',at:new Date().toISOString()}];try{localStorage.setItem(UK2,JSON.stringify(u))}catch{}return u}}catch{}
- return[]}
-let U=loadU(),SID=null;try{SID=sessionStorage.getItem(AK)}catch{}
-const saveU=()=>{try{localStorage.setItem(UK2,JSON.stringify(U));return true}catch{alert(T('تعذر حفظ المستخدمين في المتصفح.','Could not save users in the browser.'));return false}};
-const me=()=>U.find(u=>u.id===SID&&u.status==='active')||null;
-const can=k=>{const u=me();return !!u&&(!!u.owner||(u.perms||[]).includes(k))};
-const canBrand=(u,b)=>!!u&&(!!u.owner||u.brands==='*'||(Array.isArray(u.brands)&&u.brands.includes(b.id)));
-const al=()=>S.brands.filter(b=>canBrand(me(),b));
-const B=()=>{const a=al();return a.find(b=>b.id===S.active)||a[0]||null};
-const vok=v=>v==='an'?can('an'):(v==='out'||v==='ret')&&can('view');
-function fixView(){if(!vok(view))view=['out','ret','an'].find(vok)||''}
-const setT=(el,t)=>{if(el.textContent!==t)el.textContent=t};
-function chrome(){fixView();const u=me(),n=U.filter(x=>x.status==='pending').length,sh=(s,v)=>{$(s).hidden=!v};
- setT($('#who'),u?'👤 '+u.name:'');
- sh('#um',can('usr'));setT($('#um'),T('👥 المستخدمون','👥 Users')+(n?` (${n})`:''));
- sh('#cf',can('cfg'));sh('.sc',can('scan'));sh('.st',can('view'));sh('#dz',can('rz'));
- sh('#dl',can('xl'));sh('#dm',can('xl'));sh('#dbg',can('cfg'));sh('#rf',can('scan'));
- $('.bar').hidden=!(can('an')||can('xl'));
- document.querySelectorAll('[data-v]').forEach(x=>{x.hidden=!vok(x.dataset.v)});
- $('.vt').hidden=![...document.querySelectorAll('[data-v]')].some(x=>!x.hidden)}
-function auth(k){U=loadU();const u=U.find(x=>x.id===SID);if(!u||u.status!=='active'){kick(u);return false}if(k&&!can(k)){render();return false}return true}
+const B=()=>S.brands.find(b=>b.id===S.active)||S.brands[0];
 const L=id=>S.scans[id]||(S.scans[id]=[]),D=id=>S.dups[id]||(S.dups[id]=[]);
 const cairo=iso=>new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Cairo'}).format(new Date(iso));
 const ft=iso=>new Date(iso).toLocaleString(LANG==='en'?'en-GB':'ar-EG',{timeZone:'Africa/Cairo'});
@@ -179,18 +144,15 @@ function skin(b){const st=document.body.style;st.cssText='';const bg=b.bgType===
  else if(h.dataset.l){delete h.dataset.l;h.textContent='مسح الشحنات'}}
 const img2url=(f,max,q,png)=>new Promise((ok,no)=>{const r=new FileReader();r.onerror=no;r.onload=()=>{const i=new Image();i.onerror=no;i.onload=()=>{const k=Math.min(1,max/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=Math.round(i.width*k);c.height=Math.round(i.height*k);c.getContext('2d').drawImage(i,0,0,c.width,c.height);ok(c.toDataURL(png?'image/png':'image/jpeg',q))};i.src=r.result};r.readAsDataURL(f)});
 function render(){
- chrome();const b=B();
- if(!b){$('#tabs').innerHTML='';$('#an').hidden=true;$('#tw').hidden=!me();$('#rows').innerHTML=me()?`<tr><td colspan="11">${T('لا توجد براندات مسموحة لحسابك. كلّم المسؤول.','No brands are allowed for your account. Contact the administrator.')}</td></tr>`:'';return}
- S.active=b.id;document.documentElement.style.setProperty('--c',b.color);skin(b);
- $('#tabs').innerHTML=(can('sw')?al():[b]).map(x=>`<button class="tab ${x.id===b.id?'on':''}" data-id="${esc(x.id)}">${esc(x.name)}</button>`).join('');
+ const b=B();S.active=b.id;document.documentElement.style.setProperty('--c',b.color);skin(b);
+ $('#tabs').innerHTML=S.brands.map(x=>`<button class="tab ${x.id===b.id?'on':''}" data-id="${esc(x.id)}">${esc(x.name)}</button>`).join('');
  const all=L(b.id),today=cairo(new Date().toISOString()),ret=all.filter(s=>s.kind==='return'),out=all.filter(s=>s.kind!=='return');
  $('#s1').textContent=out.length;$('#s2').textContent=ret.length;$('#s3').textContent=all.filter(s=>cairo(s.at)===today).length;$('#s4').textContent=D(b.id).filter(x=>!x.rz).length;
  document.querySelectorAll('[data-v]').forEach(x=>x.classList.toggle('on',x.dataset.v===view));
- $('#tw').hidden=view==='an'||!view;$('#an').hidden=view!=='an';
- if(!view){$('#rows').innerHTML='';return}
+ $('#tw').hidden=view==='an';$('#an').hidden=view!=='an';
  if(view==='an')return an(all);
  const l=view==='ret'?ret:out;
- $('#rows').innerHTML=l.length?l.slice(-200).reverse().map(s=>{const k=s.kind||'delivery';return `<tr><td class="t">${esc(s.tn)}</td><td><button class="kd k-${k}" data-k="${esc(s.id)}"${can('kind')?'':' disabled'} title="${esc((s.bt||'')+' / '+(s.st||''))} — ${T('اضغط لتغيير النوع','click to change type')}">${tt(KL[k])}</button></td><td>${esc(ft(s.at))}</td><td>${esc(s.cn||'—')}<br><small style="color:var(--mut);unicode-bidi:plaintext">${esc(s.cp||'')}</small></td><td>${esc(s.gov||'—')}</td><td>${esc(s.items??'—')}</td><td>${esc(s.desc||s.doc||'—')}</td><td>${esc(s.cod??'—')}</td><td>${esc(s.fees??'—')}</td><td>${esc(s.st||(s.ver==='VERIFIED'?'—':'بدون تحقق'))}</td><td>${can('del')?`<button class="x" data-del="${esc(s.id)}">حذف</button>`:''}</td></tr>`}).join(''):`<tr><td colspan="11">${view==='ret'?'لا توجد مرتجعات لهذا البراند.':'لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.'}</td></tr>`;
+ $('#rows').innerHTML=l.length?l.slice(-200).reverse().map(s=>{const k=s.kind||'delivery';return `<tr><td class="t">${esc(s.tn)}</td><td><button class="kd k-${k}" data-k="${esc(s.id)}" title="${esc((s.bt||'')+' / '+(s.st||''))} — ${T('اضغط لتغيير النوع','click to change type')}">${tt(KL[k])}</button></td><td>${esc(ft(s.at))}</td><td>${esc(s.cn||'—')}<br><small style="color:var(--mut);unicode-bidi:plaintext">${esc(s.cp||'')}</small></td><td>${esc(s.gov||'—')}</td><td>${esc(s.items??'—')}</td><td>${esc(s.desc||s.doc||'—')}</td><td>${esc(s.cod??'—')}</td><td>${esc(s.fees??'—')}</td><td>${esc(s.st||(s.ver==='VERIFIED'?'—':'بدون تحقق'))}</td><td><button class="x" data-del="${esc(s.id)}">حذف</button></td></tr>`}).join(''):`<tr><td colspan="11">${view==='ret'?'لا توجد مرتجعات لهذا البراند.':'لا توجد شحنات لهذا البراند. ابدأ بمسح أول باركود.'}</td></tr>`;
 }
 const OCD=/^\s*delivered/i,OCR=/returned|rto/i,ck=s=>String(s.cp||'').replace(/\D/g,'').slice(-10)||(s.cn||'').trim()||'—';
 function outcomes(all,l){
@@ -295,9 +257,9 @@ async function handle(b,tn){
  msg(T(`تمت إضافة ${tn} (${tt(KL[k])}) إلى ${b.name}`,`Added ${tn} (${tt(KL[k])}) to ${b.name}`)+(r.ver==='VERIFIED'?T(' بعد التحقق.',' after verification.'):T(' (بدون تحقق).',' (unverified).'))+miss,miss||k==='return'||r.ver!=='VERIFIED'?'warn':'ok');beep(880,90);
 }
 let chain=Promise.resolve();
-$('#tn').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const tn=e.target.value.trim();e.target.value='';if(!tn)return;const b=B();if(!b||!auth('scan'))return;chain=chain.then(()=>auth('scan')?handle(b,tn):0)});
-$('#tabs').onclick=e=>{const id=e.target.dataset.id;if(id&&auth('sw')&&al().some(x=>x.id===id)){S.active=id;save();render();$('#msg').className='';$('#tn').focus()}};
-$('#rows').onclick=e=>{const id=e.target.dataset.del;if(!id||!auth('del'))return;const b=B();if(!b)return;const s=L(b.id).find(x=>x.id===id);if(s&&confirm(T(`حذف الشحنة ${s.tn} من ${b.name}؟`,`Delete shipment ${s.tn} from ${b.name}?`))){S.scans[b.id]=L(b.id).filter(x=>x.id!==id);save();render()}};
+$('#tn').addEventListener('keydown',e=>{if(e.key!=='Enter')return;e.preventDefault();const tn=e.target.value.trim();e.target.value='';if(!tn)return;const b=B();chain=chain.then(()=>handle(b,tn))});
+$('#tabs').onclick=e=>{const id=e.target.dataset.id;if(id){S.active=id;save();render();$('#msg').className='';$('#tn').focus()}};
+$('#rows').onclick=e=>{const id=e.target.dataset.del;if(!id)return;const b=B(),s=L(b.id).find(x=>x.id===id);if(s&&confirm(T(`حذف الشحنة ${s.tn} من ${b.name}؟`,`Delete shipment ${s.tn} from ${b.name}?`))){S.scans[b.id]=L(b.id).filter(x=>x.id!==id);save();render()}};
 function dlf(name,text,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
 const sel=()=>$('#dd').value||cairo(new Date().toISOString());
 const lbl=()=>{$('#dl').textContent=$('#dm').value==='m'?'📥 تحميل تقرير الشهر Excel':'📥 تحميل تقرير اليوم Excel'};
@@ -323,7 +285,6 @@ function sheet(wb,name,title,rows,sub,color){
  ws.autoFilter={from:{row:4,column:1},to:{row:last,column:n}};
 }
 async function xlsx(){
- if(!B()||!auth('xl'))return;
  const bt=$('#dl'),k=$('#dm').value,isM=k==='m',b=B(),d=sel(),m=d.slice(0,7),f=x=>isM?cairo(x.at).startsWith(m):cairo(x.at)===d;
  const rows=L(b.id).filter(f).sort((p,q)=>p.at.localeCompare(q.at)),du=D(b.id).filter(f),sale=rows.filter(x=>x.kind!=='return'),ret=rows.filter(x=>x.kind==='return');
  bt.disabled=true;
@@ -339,12 +300,12 @@ async function xlsx(){
  bt.disabled=false;
 }
 $('#dl').onclick=xlsx;
-$('#dz').onclick=()=>{const b=B();if(!b||!auth('rz'))return;const n=D(b.id).filter(x=>!x.rz).length;if(!n)return;if(confirm(T(`تصفير عداد المحاولات المكررة (${n}) لـ ${b.name}؟ التقارير المحفوظة لن تتأثر.`,`Reset the duplicate attempts counter (${n}) for ${b.name}? Saved reports are not affected.`))){D(b.id).forEach(x=>{x.rz=1});save();render()}};
-$('#dbg').onclick=()=>{if(!auth('cfg'))return;if(!lastRaw)return msg('امسح شحنة بوسطة حقيقية الأول، وبعدين اضغط الزرار.','warn');navigator.clipboard.writeText(JSON.stringify(red(lastRaw),null,1)).then(()=>msg('تم نسخ رد بوسطة (بعد حجب بيانات العميل). الصقه في الشات.','ok'),()=>msg('تعذر النسخ.','err'))};
-document.querySelector('.vt').onclick=e=>{if(e.target.dataset.v&&auth(e.target.dataset.v==='an'?'an':'view')){view=e.target.dataset.v;render();$('#tn').focus()}};$('#per').onchange=$('#cs').onchange=$('#dd').onchange=render;$('#dm').onchange=lbl;
+$('#dz').onclick=()=>{const b=B(),n=D(b.id).filter(x=>!x.rz).length;if(!n)return;if(confirm(T(`تصفير عداد المحاولات المكررة (${n}) لـ ${b.name}؟ التقارير المحفوظة لن تتأثر.`,`Reset the duplicate attempts counter (${n}) for ${b.name}? Saved reports are not affected.`))){D(b.id).forEach(x=>{x.rz=1});save();render()}};
+$('#dbg').onclick=()=>{if(!lastRaw)return msg('امسح شحنة بوسطة حقيقية الأول، وبعدين اضغط الزرار.','warn');navigator.clipboard.writeText(JSON.stringify(red(lastRaw),null,1)).then(()=>msg('تم نسخ رد بوسطة (بعد حجب بيانات العميل). الصقه في الشات.','ok'),()=>msg('تعذر النسخ.','err'))};
+document.querySelector('.vt').onclick=e=>{if(e.target.dataset.v){view=e.target.dataset.v;render();$('#tn').focus()}};$('#per').onchange=$('#cs').onchange=$('#dd').onchange=render;$('#dm').onchange=lbl;
 let rfBusy=false;
 $('#rf').onclick=async()=>{
- if(rfBusy||!auth('scan'))return;const b=B();if(!b)return;const st=$('#rfs'),rs=new Set(L(b.id).filter(s=>s.kind==='return').map(s=>s.tn.toLowerCase()));
+ if(rfBusy)return;const b=B(),st=$('#rfs'),rs=new Set(L(b.id).filter(s=>s.kind==='return').map(s=>s.tn.toLowerCase()));
  const todo=L(b.id).filter(s=>s.kind!=='return'&&s.ver==='VERIFIED'&&!rs.has(s.tn.toLowerCase())&&!OCD.test(s.st||'')&&!OCR.test(s.st||'')).sort((a,c)=>(a.chk||'').localeCompare(c.chk||'')).slice(0,100);
  if(!todo.length){st.textContent='كل الشحنات محدّثة (مستلمة أو مرتجعة).';return}
  rfBusy=true;let ok=0,bad=0;
@@ -352,7 +313,7 @@ $('#rf').onclick=async()=>{
   try{const h=(await verify(b,s.tn)).ship;s.st=h.st;s.bt=h.bt;s.cn=s.cn||h.cn;s.cp=s.cp||h.cp;s.gov=s.gov||h.gov;s.desc=s.desc||h.desc;s.doc=s.doc||h.doc;if(s.items==null&&h.items!=null)s.items=h.items;ok++}catch{bad++}
   s.chk=new Date().toISOString();await new Promise(r=>setTimeout(r,250))}
  save();rfBusy=false;st.textContent=T(`تم تحديث ${ok} شحنة`,`Updated ${ok} shipments`)+(bad?T(` وفشل ${bad}`,` and ${bad} failed`):'')+(todo.length===100?T(' — اضغط تاني لتحديث الباقي.',' — press again to update the rest.'):'.');render()};
-$('#rows').addEventListener('click',e=>{const id=e.target.dataset.k;if(!id||!auth('kind'))return;const s=L(B().id).find(x=>x.id===id);if(!s)return;const o=['delivery','exchange','return'],n=o[(o.indexOf(s.kind||'delivery')+1)%3];if((n==='return')!==(s.kind==='return'))['items','cod','fees'].forEach(k=>{if(s[k]!=null)s[k]=-s[k]});s.kind=n;save();render()});
+$('#rows').addEventListener('click',e=>{const id=e.target.dataset.k;if(!id)return;const s=L(B().id).find(x=>x.id===id);if(!s)return;const o=['delivery','exchange','return'],n=o[(o.indexOf(s.kind||'delivery')+1)%3];if((n==='return')!==(s.kind==='return'))['items','cod','fees'].forEach(k=>{if(s[k]!=null)s[k]=-s[k]});s.kind=n;save();render()});
 const fld=(i,k,l,v,t='text',h='',c='')=>`<div class="f"><label>${l}</label><input type="${t}" class="${c}" data-i="${i}" data-k="${k}" value="${esc(v||'')}">${h?`<small>${h}</small>`:''}</div>`;
 function cfgRows(){$('#bl').innerHTML=S.brands.map((b,i)=>`<fieldset><legend>${esc(b.name)}</legend>${fld(i,'name','اسم البراند',b.name)}${fld(i,'color','اللون',b.color,'color')}
 <div class="f"><label>خلفية الموقع</label><select data-i="${i}" data-k="bgType"><option value="" ${!b.bgType?'selected':''}>بدون (الافتراضي)</option><option value="color" ${b.bgType==='color'?'selected':''}>لون</option><option value="image" ${b.bgType==='image'?'selected':''}>صورة</option></select></div>
@@ -364,20 +325,16 @@ ${fld(i,'apiKey','مفتاح الـ API لهذا البراند',b.apiKey,'passw
 ${fld(i,'tpl','رابط التحقق (للشركة الأخرى فقط)',b.tpl,'text','مثال: https://api.example.com/track/{tracking}','l')}${fld(i,'pre','بادئة المفتاح (مثال: Bearer )',b.pre,'text','','l')}
 ${fld(i,'proxy','رابط Proxy (اختياري)',b.proxy,'text','لو ظهرت رسالة CORS ضع رابط الـ Worker هنا','l')}
 ${S.brands.length>1?`<button type="button" data-rm="${i}">حذف البراند</button>`:''}</fieldset>`).join('')}
-const PK='scanapp.pw.v1';let PW=null;try{PW=JSON.parse(localStorage.getItem(PK))}catch{}
-const sha=async t=>{const b=new TextEncoder().encode(t);if(window.crypto&&crypto.subtle){const h=await crypto.subtle.digest('SHA-256',b);return[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,'0')).join('')}let h=5381;for(const c of b)h=((h<<5)+h+c)>>>0;return'x'+h};
-function pwAsk(setMode,title){return new Promise(res=>{
- const d=$('#pwd'),f=$('#pwf'),e=$('#pwe');$('#pwt').textContent=title;$('#pw2w').hidden=!setMode;$('#pw1').value=$('#pw2').value='';e.textContent='';
+function pwAsk(title){return new Promise(res=>{
+ const d=$('#pwd'),f=$('#pwf'),e=$('#pwe');$('#pwt').textContent=title;$('#pw2w').hidden=false;$('#pw1').value=$('#pw2').value='';e.textContent='';
  const done=v=>{f.onsubmit=null;$('#pwx').onclick=null;d.onclose=null;if(d.open)d.close();res(v)};
- f.onsubmit=async ev=>{ev.preventDefault();const a=$('#pw1').value;
-  if(setMode){if(a.length<4){e.textContent='كلمة المرور لازم تكون 4 حروف على الأقل.';return}if(a!==$('#pw2').value){e.textContent='التأكيد غير مطابق.';return}
-   const s=Math.random().toString(36).slice(2)+Date.now().toString(36),rec={s,h:await sha(s+a)};
-   try{localStorage.setItem(PK,JSON.stringify(rec))}catch{e.textContent='تعذر حفظ كلمة المرور في المتصفح.';return}
-   PW=rec;done(true)}
-  else if(await sha(PW.s+a)===PW.h)done(true);else{e.textContent='كلمة المرور غير صحيحة.';$('#pw1').select()}};
- $('#pwx').onclick=()=>done(false);d.onclose=()=>done(false);d.showModal();$('#pw1').focus()})}
-$('#cf').onclick=async()=>{if(!auth('cfg'))return;const ok=PW?await pwAsk(false,'كلمة مرور الإعدادات'):await pwAsk(true,'إنشاء كلمة مرور للإعدادات');if(!ok)return;cfgRows();$('#dlg').showModal()};
-$('#cpw').onclick=async()=>{if(await pwAsk(false,'أدخل كلمة المرور الحالية'))await pwAsk(true,'كلمة المرور الجديدة')};
+ f.onsubmit=ev=>{ev.preventDefault();const a=$('#pw1').value;
+  if(a.length<8){e.textContent=T('كلمة المرور لازم تكون 8 حروف على الأقل.','Password must be at least 8 characters.');return}
+  if(a!==$('#pw2').value){e.textContent=T('التأكيد غير مطابق.','Confirmation does not match.');return}done(a)};
+ $('#pwx').onclick=()=>done(null);d.onclose=()=>done(null);d.showModal();$('#pw1').focus()})}
+$('#cpw').onclick=async()=>{if(!sb)return;const p=await pwAsk(T('كلمة مرور جديدة لحسابك','New password for your account'));if(!p)return;
+ const{error}=await sb.auth.updateUser({password:p});msg(error?T('تعذر تغيير كلمة المرور: ','Could not change the password: ')+error.message:T('تم تغيير كلمة المرور.','Password changed.'),error?'err':'ok')};
+$('#cf').onclick=()=>{if(!isAdm())return;cfgRows();$('#dlg').showModal()};
 $('#add').onclick=()=>{readCfg();const n=prompt(T('اسم البراند الجديد؟','New brand name?'));if(!n)return;S.brands.push({id:'b'+Date.now().toString(36),name:n.trim(),color:'#555555',carrier:'bosta'});cfgRows()};
 $('#bl').onclick=e=>{const c=e.target.dataset.clr;if(c){readCfg();delete S.brands[e.target.dataset.i][c];cfgRows();return}const i=e.target.dataset.rm;if(i==null)return;readCfg();const b=S.brands[i];if(L(b.id).length&&!confirm(T(`${b.name} فيه ${L(b.id).length} شحنة. هتتمسح مع البراند. متأكد؟`,`${b.name} has ${L(b.id).length} shipments. They will be deleted with the brand. Are you sure?`)))return;S.brands.splice(i,1);delete S.scans[b.id];delete S.dups[b.id];cfgRows()};
 function readCfg(){document.querySelectorAll('#bl [data-k]').forEach(el=>{S.brands[el.dataset.i][el.dataset.k]=el.value})}
@@ -395,102 +352,54 @@ $('#dd').value=cairo(new Date().toISOString());render();
 function setLang(l,sv){LANG=l;const h=document.documentElement;h.lang=l;h.dir=l==='en'?'ltr':'rtl';if(sv)try{localStorage.setItem('scanapp.lang',l)}catch{}
  document.title=T('مسح الشحنات','Shipment Scanner');$('#lg').textContent=l==='en'?'🌐 العربية':'🌐 English';loc(document.body)}
 new MutationObserver(()=>{if(LANG==='en')loc(document.body)}).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});
-$('#lg').onclick=()=>{setLang(LANG==='en'?'ar':'en',1);render()};
+$('#lg').onclick=()=>{setLang(LANG==='en'?'ar':'en',1);render();loginMode(signup)};
 setLang(LANG);
-/* ===== login / users ===== */
-const UD=$('#udlg');let ued=null,lmode='login',lastSig='';
-const sig=u=>JSON.stringify([u.status,u.perms,u.brands,u.owner]);
-const lerr=(t,ok)=>{const e=$('#le');e.textContent=t||'';e.style.color=ok?'var(--ok)':'var(--bad)'};
-function lform(){const s=lmode==='setup',r=lmode==='req';
- $('#lt').textContent=s?'إنشاء حساب المسؤول':r?'طلب إنشاء حساب جديد':'تسجيل الدخول';
- $('#ln').hidden=!s;$('#lnw').hidden=!r;$('#lcw').hidden=!(s||r);
- $('#lul').textContent=r?'الإيميل':'الإيميل أو اسم المستخدم';
- $('#lb').textContent=s?'حفظ ودخول':r?'إرسال الطلب':'دخول';
- $('#lq').hidden=s;$('#lq').textContent=r?'← رجوع لتسجيل الدخول':'طلب إنشاء حساب جديد';
- $('#lp').autocomplete=lmode==='login'?'current-password':'new-password';
- $('#lnm').value=$('#lu').value=$('#lp').value=$('#lc').value='';lerr('');(r?$('#lnm'):$('#lu')).focus()}
-function lockUI(m){document.body.classList.add('locked');$('#rows').innerHTML='';$('#anb').innerHTML='';lmode=m||(U.length?'login':'setup');lform()}
-function unlock(u){SID=u.id;lastSig=sig(u);try{sessionStorage.setItem(AK,u.id)}catch{}document.body.classList.remove('locked');render();$('#tn').focus()}
-function kick(u){if(document.body.classList.contains('locked'))return;try{sessionStorage.removeItem(AK)}catch{}SID=null;document.querySelectorAll('dialog[open]').forEach(d=>d.close());lockUI('login');
- lerr(!u?T('حسابك لم يعد موجودًا.','Your account no longer exists.'):u.status==='pending'?T('حسابك قيد المراجعة.','Your account is pending review.'):T('تم تعطيل حسابك. تواصل مع المسؤول.','Your account has been disabled. Contact the administrator.'))}
-function sync(){if(document.body.classList.contains('locked'))return;U=loadU();const u=U.find(x=>x.id===SID);if(!u||u.status!=='active')return kick(u);
- const g=sig(u);if(g!==lastSig){lastSig=g;render()}else chrome();if(UD.open&&!ued)urender()}
-$('#lq').onclick=()=>{lockUI(lmode==='req'?'login':'req')};
-$('#lf').onsubmit=async e=>{e.preventDefault();U=loadU();const id=$('#lu').value.trim().toLowerCase(),p=$('#lp').value,nm=$('#lnm').value.trim(),now=new Date().toISOString(),
- mk=async()=>{const s=Math.random().toString(36).slice(2)+Date.now().toString(36);return{s,h:await sha(s+id+':'+p)}},
- nid=()=>'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
- if(lmode==='setup'){
-  if(U.length){lockUI('login');return}
-  if(!id){lerr(T('الإيميل أو اسم المستخدم مطلوب.','Email or username is required.'));return}
-  if(p.length<4){lerr(T('كلمة المرور لازم تكون 4 حروف على الأقل.','Password must be at least 4 characters.'));return}
-  if(p!==$('#lc').value){lerr(T('التأكيد غير مطابق.','Confirmation does not match.'));return}
-  const r=await mk(),u={id:nid(),name:id,email:id,...r,status:'active',owner:1,tpl:'full',perms:[...ALLP],brands:'*',at:now};
-  U=[u];if(!saveU())return;unlock(u);return}
- if(lmode==='req'){
-  if(!nm){lerr(T('الاسم مطلوب.','Name is required.'));return}
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id)){lerr(T('اكتب إيميل صحيح.','Enter a valid email.'));return}
-  if(p.length<4){lerr(T('كلمة المرور لازم تكون 4 حروف على الأقل.','Password must be at least 4 characters.'));return}
-  if(p!==$('#lc').value){lerr(T('التأكيد غير مطابق.','Confirmation does not match.'));return}
-  const r=await mk();U=loadU();
-  if(U.some(x=>x.email===id)){lerr(T('الإيميل ده مسجل قبل كده أو طلبه تحت المراجعة.','This email is already registered or has a pending request.'));return}
-  U.push({id:nid(),name:nm,email:id,...r,status:'pending',tpl:'',perms:[],brands:[],at:now});if(!saveU())return;
-  lockUI('login');lerr(T('تم إرسال طلبك. هتقدر تدخل بعد موافقة المسؤول.','Your request was sent. You can sign in once the administrator approves it.'),1);return}
- const u=U.find(x=>x.email===id);
- if(!u||await sha(u.s+u.email+':'+p)!==u.h){await new Promise(r=>setTimeout(r,700));lerr(T('الإيميل أو كلمة المرور غير صحيحة.','Incorrect email or password.'));$('#lp').select();return}
- if(u.status==='pending'){lerr(T('طلبك لسه قيد المراجعة. هتقدر تدخل بعد موافقة المسؤول.','Your request is still under review. You can sign in once the administrator approves it.'));return}
- if(u.status!=='active'){lerr(T('الحساب ده معطّل. تواصل مع المسؤول.','This account is disabled. Contact the administrator.'));return}
- unlock(u)};
-$('#lo').onclick=()=>{try{sessionStorage.removeItem(AK)}catch{}SID=null;U=loadU();lockUI()};
-/* ----- إدارة المستخدمين ----- */
-const bTxt=u=>u.owner||u.brands==='*'?T('كل البراندات','All brands'):(S.brands.filter(b=>(u.brands||[]).includes(b.id)).map(b=>b.name).join('، ')||'—');
-const stB=u=>u.status==='pending'?'<span class="v u">قيد المراجعة</span>':u.status==='draft'?'<span class="v d">مسودة</span>':'<span class="v">نشط</span>';
-const urow=u=>{const own=!!u.owner,self=u.id===SID;
- return `<div class="ur"><div class="i"><b>${esc(u.name)}${self?` <small>(${T('أنت','You')})</small>`:''}</b><small style="display:block">${esc(u.email)}</small><small style="display:block">${own?T('المالك — تحكم كامل','Owner — full control'):esc(tt(TPL[u.tpl]?TPL[u.tpl].n:'مخصص'))+' · '+esc(bTxt(u))}</small></div>${stB(u)}<div class="a">${own?'':`<button type="button" data-edit="${esc(u.id)}">تعديل</button>`}${own||self?'':`<button type="button" data-tg="${esc(u.id)}">${u.status==='active'?'تعطيل':'تفعيل'}</button><button type="button" class="x" data-rm="${esc(u.id)}">حذف</button>`}</div></div>`};
-function editor(u){const pend=u.status==='pending',ps=new Set(pend?TPL.ro.p:u.perms||[]),all=!pend&&u.brands==='*',bs=new Set(Array.isArray(u.brands)?u.brands:[]),tp=pend?'ro':(u.tpl||'custom');
- return `<h3>${pend?'مراجعة طلب جديد':'تعديل مستخدم'}</h3><p><b>${esc(u.name)}</b><br><small class="mut" style="unicode-bidi:plaintext">${esc(u.email)}</small></p>
-<div class="f"><label for="utpl">قالب الصلاحيات</label><select id="utpl">${['full','ro','sc'].map(k=>`<option value="${k}" ${tp===k?'selected':''}>${esc(tt(TPL[k].n))}</option>`).join('')}<option value="custom" ${tp==='custom'?'selected':''}>مخصص</option></select><small>تقدر تعدّل أي صلاحية يدويًا بعد اختيار القالب.</small></div>
-<fieldset><legend>الصلاحيات</legend><div class="pg">${PERMS.map(([k,l])=>`<label><input type="checkbox" data-p="${k}" ${ps.has(k)?'checked':''}> <span>${l}</span></label>`).join('')}</div></fieldset>
-<fieldset><legend>البراندات المسموحة</legend><div class="pg"><label><input type="checkbox" id="uball" ${all?'checked':''}> <span>كل البراندات (بما فيها أي براند يُضاف لاحقًا)</span></label>${S.brands.map(b=>`<label><input type="checkbox" data-b="${esc(b.id)}" ${bs.has(b.id)?'checked':''} ${all?'disabled':''}> <span>${esc(b.name)}</span></label>`).join('')}</div></fieldset>
-<div id="uerr" role="alert" style="color:var(--bad);font-weight:600;min-height:1.6em"></div>
-<button type="button" class="pri" id="uok" data-id="${esc(u.id)}">${pend?'موافقة وحفظ':'حفظ'}</button> ${pend?'<button type="button" class="x" id="urej" data-id="'+esc(u.id)+'">رفض الطلب وحذفه</button> ':''}<button type="button" id="ucn">رجوع</button>`}
-function urender(){const el=$('#ub');
- if(ued){const u=U.find(x=>x.id===ued);if(u&&!u.owner){el.innerHTML=editor(u);return}ued=null}
- const pend=U.filter(u=>u.status==='pending'),rest=U.filter(u=>u.status!=='pending');
- el.innerHTML=`<h3>طلبات الدخول الجديدة</h3>${pend.length?pend.map(u=>`<div class="ur"><div class="i"><b>${esc(u.name)}</b><small style="display:block">${esc(u.email)} · ${esc(ft(u.at))}</small></div><span class="v u">طلب جديد</span><div class="a"><button type="button" class="pri" data-rev="${esc(u.id)}">مراجعة</button></div></div>`).join(''):'<p class="mut">لا توجد طلبات جديدة.</p>'}<h3>المستخدمون الحاليون</h3>${rest.map(urow).join('')||'<p class="mut">لا يوجد مستخدمون.</p>'}`}
-$('#um').onclick=()=>{if(!auth('usr'))return;ued=null;urender();UD.showModal()};
-$('#ux').onclick=()=>UD.close();
-$('#ub').onclick=e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
- if(d.rev||d.edit){if(!auth('usr'))return;ued=d.rev||d.edit;urender();return}
- if(d.tg){if(!auth('usr'))return;const u=U.find(x=>x.id===d.tg);if(!u||u.owner||u.id===SID||u.status==='pending')return;u.status=u.status==='active'?'draft':'active';if(saveU()){urender();render()}return}
- if(d.rm){if(!auth('usr'))return;const u=U.find(x=>x.id===d.rm);if(!u||u.owner||u.id===SID)return;if(!confirm(T(`حذف المستخدم ${u.name}؟`,`Delete user ${u.name}?`)))return;U=U.filter(x=>x.id!==u.id);if(saveU()){urender();render()}return}
- if(t.id==='ucn'){ued=null;urender();return}
- if(t.id==='urej'){if(!auth('usr'))return;const u=U.find(x=>x.id===d.id);if(!u||u.status!=='pending')return;if(!confirm(T(`رفض طلب ${u.name} وحذفه؟`,`Reject and delete ${u.name}'s request?`)))return;U=U.filter(x=>x.id!==u.id);if(saveU()){ued=null;urender();render()}return}
- if(t.id==='uok'){if(!auth('usr'))return;const u=U.find(x=>x.id===d.id);if(!u||u.owner)return;const er=$('#uerr'),
-  ps=[...document.querySelectorAll('#ub [data-p]:checked')].map(x=>x.dataset.p),all=$('#uball').checked,bs=[...document.querySelectorAll('#ub [data-b]:checked')].map(x=>x.dataset.b);
-  if(!ps.length){er.textContent=T('اختار صلاحية واحدة على الأقل.','Choose at least one permission.');return}
-  if(!all&&!bs.length){er.textContent=T('اختار براند واحد على الأقل أو "كل البراندات".','Choose at least one brand or "All brands".');return}
-  if(u.id===SID&&!ps.includes('usr')){er.textContent=T('مينفعش تشيل صلاحية إدارة المستخدمين من حسابك.','You cannot remove the user-management permission from your own account.');return}
-  u.perms=ps;u.brands=all?'*':bs;u.tpl=tplOf(ps);if(u.status==='pending'){u.status='active';u.ap=new Date().toISOString()}
-  if(saveU()){ued=null;urender();render()}}};
-$('#ub').onchange=e=>{const t=e.target;
- if(t.id==='utpl'){const p=TPL[t.value];if(p)document.querySelectorAll('#ub [data-p]').forEach(c=>{c.checked=p.p.includes(c.dataset.p)})}
- else if(t.dataset.p!==undefined){$('#utpl').value=tplOf([...document.querySelectorAll('#ub [data-p]:checked')].map(x=>x.dataset.p))}
- else if(t.id==='uball'){document.querySelectorAll('#ub [data-b]').forEach(c=>{c.disabled=t.checked})}};
-{const u=me();if(u)unlock(u);else lockUI()}
-setInterval(sync,3000);addEventListener('storage',e=>{if(e.key===UK2)sync()});addEventListener('focus',sync);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
-/* ===== mouse smoke ===== */
-const SK='scanapp.smoke';let smokeOn=true;try{const v=localStorage.getItem(SK);smokeOn=v?v==='1':!matchMedia('(prefers-reduced-motion:reduce)').matches}catch{}
-const cv=$('#smk'),cx=cv.getContext('2d'),P=[];let raf=0,lx=0,ly=0,hue=0;
-function rs(){const d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
-addEventListener('resize',rs);rs();
-function puff(x,y,n){hue=(hue+5)%360;for(let i=0;i<n&&P.length<140;i++)P.push({x:x+(Math.random()-.5)*8,y:y+(Math.random()-.5)*8,vx:(Math.random()-.5)*.8,vy:-.3-Math.random()*.7,r:10+Math.random()*10,l:0,h:hue+Math.random()*50})}
-function tick(){cx.clearRect(0,0,innerWidth,innerHeight);
- for(let i=P.length-1;i>=0;i--){const p=P[i];if(++p.l>=60){P.splice(i,1);continue}p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.r+=.55;const a=.3*(1-p.l/60),g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-  g.addColorStop(0,`hsla(${p.h},90%,60%,${a})`);g.addColorStop(1,`hsla(${p.h},90%,60%,0)`);cx.fillStyle=g;cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill()}
- raf=P.length?requestAnimationFrame(tick):0}
-addEventListener('pointermove',e=>{if(!smokeOn)return;const d=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;puff(lx,ly,Math.min(3,1+(d>>3)));if(!raf)raf=requestAnimationFrame(tick)},{passive:true});
-function setSmoke(on,sv){smokeOn=on;if(sv)try{localStorage.setItem(SK,on?'1':'0')}catch{}$('#smb').textContent=on?'💨 دخان: تشغيل':'💨 دخان: إيقاف';$('#smb').setAttribute('aria-pressed',on);if(!on){P.length=0;cx.clearRect(0,0,innerWidth,innerHeight)}}
-$('#smb').onclick=()=>setSmoke(!smokeOn,1);setSmoke(smokeOn);
+/* ===== تسجيل الدخول (Supabase Auth) ===== */
+/* عدّل السطرين دول فقط: Project Settings > API Keys */
+const SUPABASE_URL='https://rvlytvitcfmmyxpqdqqj.supabase.co',SUPABASE_KEY='sb_publishable_o2BLbNJbTPs66PASnf3osA_kZj9acBr';
+const KEEP_LOGIN=false; // true = يفضل المستخدم مسجّل دخول بعد إغلاق المتصفح (على جهاز شخصي فقط)
+const sb=(window.supabase&&/^https:\/\//.test(SUPABASE_URL)&&!/PASTE_/.test(SUPABASE_URL+SUPABASE_KEY))?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,storage:KEEP_LOGIN?window.localStorage:window.sessionStorage}}):null;
+let ME=null,signup=false;const isAdm=()=>!!ME&&ME.role==='admin';
+function lockUI(){ME=null;document.body.classList.add('locked');$('#le').textContent='';$('#lm').textContent='';$('#lp').value=$('#lc').value='';$('#lu').focus()}
+function unlock(){document.body.classList.remove('locked');$('#tn').focus()}
+function applyRole(){$('#who').textContent=(ME.name||ME.email)+' · '+(isAdm()?T('مسؤول','Admin'):T('موظف','Staff'));$('#cf').hidden=!isAdm()}
+function loginMode(on){signup=on;$('#lnw').hidden=!on;$('#lcw').hidden=!on;$('#lt').textContent=T(on?'طلب إنشاء حساب':'تسجيل الدخول',on?'Request an account':'Sign in');$('#lb').textContent=T(on?'إرسال الطلب':'دخول',on?'Send request':'Sign in');$('#lsw').textContent=T(on?'لديك حساب؟ سجّل الدخول':'ليس لديك حساب؟ اطلب حساب جديد',on?'Have an account? Sign in':'No account? Request one');$('#le').textContent='';$('#lm').textContent=''}
+$('#lsw').onclick=()=>loginMode(!signup);
+async function enter(session){
+ const fail=async m=>{try{await sb.auth.signOut()}catch{}lockUI();$('#le').textContent=m;return false};
+ const{data:pf,error}=await sb.from('profiles').select('*').eq('id',session.user.id).maybeSingle();
+ if(error)return fail(T('تعذر قراءة بيانات حسابك: ','Could not read your account: ')+error.message);
+ if(!pf)return fail(T('حسابك غير مُعدّ. تواصل مع المسؤول.','Your account is not set up. Contact the admin.'));
+ if(pf.status==='pending')return fail(T('طلبك قيد المراجعة. هتقدر تدخل بعد موافقة المسؤول.','Your request is pending. You can sign in once the admin approves it.'));
+ if(pf.status!=='approved')return fail(T('حسابك موقوف. تواصل مع المسؤول.','Your account is disabled. Contact the admin.'));
+ ME={id:pf.id,email:pf.email,name:pf.name||'',role:pf.role,brands:pf.brands||[],perms:pf.perms||{}};
+ applyRole();unlock();return true}
+$('#lf').onsubmit=async e=>{e.preventDefault();const u=$('#lu').value.trim().toLowerCase(),p=$('#lp').value,er=$('#le'),b=$('#lb');er.textContent='';$('#lm').textContent='';
+ if(!sb){er.textContent=T('لم يتم ضبط رابط ومفتاح Supabase أول السكريبت، أو تعذر تحميل المكتبة.','Supabase URL/key are not set at the top of the script, or the library failed to load.');return}
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(u)){er.textContent=T('اكتب بريدًا إلكترونيًا صحيحًا.','Enter a valid email address.');return}
+ if(signup){
+  const nm=$('#ln').value.trim();
+  if(!nm){er.textContent=T('اكتب اسمك.','Enter your name.');return}
+  if(p.length<8){er.textContent=T('كلمة المرور لازم تكون 8 حروف على الأقل.','Password must be at least 8 characters.');return}
+  if(p!==$('#lc').value){er.textContent=T('التأكيد غير مطابق.','Confirmation does not match.');return}
+  b.disabled=true;
+  const{data,error}=await sb.auth.signUp({email:u,password:p,options:{data:{name:nm}}});
+  if(data&&data.session){try{await sb.auth.signOut()}catch{}}
+  b.disabled=false;
+  if(error){er.textContent=/registered|exists/i.test(error.message)?T('هذا البريد مسجّل بالفعل.','This email is already registered.'):error.message;return}
+  $('#lm').textContent=T('تم إرسال طلبك للمسؤول. هتقدر تدخل بعد الموافقة عليه.','Your request was sent to the admin. You can sign in once it is approved.');$('#lp').value=$('#lc').value='';return}
+ if(!p){er.textContent=T('اكتب كلمة المرور.','Enter the password.');return}
+ b.disabled=true;
+ const{data,error}=await sb.auth.signInWithPassword({email:u,password:p});
+ if(error){await new Promise(r=>setTimeout(r,600));b.disabled=false;er.textContent=/invalid login/i.test(error.message)?T('البريد أو كلمة المرور غير صحيحة.','Wrong email or password.'):error.message;$('#lp').select();return}
+ await enter(data.session);b.disabled=false};
+$('#lo').onclick=async()=>{try{if(sb)await sb.auth.signOut()}catch{}lockUI()};
+if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&ME)lockUI()});
+(async()=>{
+ if(!sb){lockUI();$('#le').textContent=T('لم يتم ضبط رابط ومفتاح Supabase أول السكريبت، أو تعذر تحميل المكتبة.','Supabase URL/key are not set at the top of the script, or the library failed to load.');return}
+ const{data}=await sb.auth.getSession();
+ if(data.session)await enter(data.session);else lockUI();
+})();
 </script>
 </body>
 </html>
