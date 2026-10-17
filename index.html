@@ -551,6 +551,19 @@ if(sb)sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&ME)lockUI()});
  const{data}=await sb.auth.getSession();
  if(data.session)await enter(data.session);else lockUI();
 })();
+/* ===== mouse smoke ===== */
+const SK='scanapp.smoke';let smokeOn=true;try{const v=localStorage.getItem(SK);smokeOn=v?v==='1':!matchMedia('(prefers-reduced-motion:reduce)').matches}catch{}
+const cv=$('#smk'),cx=cv.getContext('2d'),P=[];let raf=0,lx=0,ly=0,hue=0;
+function rs(){const d=Math.min(2,devicePixelRatio||1);cv.width=innerWidth*d;cv.height=innerHeight*d;cx.setTransform(d,0,0,d,0,0)}
+addEventListener('resize',rs);rs();
+function puff(x,y,n){hue=(hue+5)%360;for(let i=0;i<n&&P.length<140;i++)P.push({x:x+(Math.random()-.5)*8,y:y+(Math.random()-.5)*8,vx:(Math.random()-.5)*.8,vy:-.3-Math.random()*.7,r:10+Math.random()*10,l:0,h:hue+Math.random()*50})}
+function tick(){cx.clearRect(0,0,innerWidth,innerHeight);
+ for(let i=P.length-1;i>=0;i--){const p=P[i];if(++p.l>=60){P.splice(i,1);continue}p.x+=p.vx;p.y+=p.vy;p.vx*=.985;p.r+=.55;const a=.3*(1-p.l/60),g=cx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+  g.addColorStop(0,`hsla(${p.h},90%,60%,${a})`);g.addColorStop(1,`hsla(${p.h},90%,60%,0)`);cx.fillStyle=g;cx.beginPath();cx.arc(p.x,p.y,p.r,0,7);cx.fill()}
+ raf=P.length?requestAnimationFrame(tick):0}
+addEventListener('pointermove',e=>{if(!smokeOn)return;const d=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;puff(lx,ly,Math.min(3,1+(d>>3)));if(!raf)raf=requestAnimationFrame(tick)},{passive:true});
+function setSmoke(on,sv){smokeOn=on;if(sv)try{localStorage.setItem(SK,on?'1':'0')}catch{}$('#smb').textContent=on?'💨 دخان: تشغيل':'💨 دخان: إيقاف';$('#smb').setAttribute('aria-pressed',on);if(!on){P.length=0;cx.clearRect(0,0,innerWidth,innerHeight)}}
+$('#smb').onclick=()=>setSmoke(!smokeOn,1);setSmoke(smokeOn);
 </script>
 </body>
 </html>
